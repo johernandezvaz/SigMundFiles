@@ -44,3 +44,24 @@ class User(AbstractBaseUser):
 
     def __str__(self):
         return self.nombre_usuario
+
+# Modelos para Pacientes y Citas
+
+class Paciente(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    nombre = models.CharField(max_length=255)
+    telefono = models.CharField(max_length=20, blank=True, null=True)
+    direccion = models.CharField(max_length=255, blank=True, null=True)
+    apellido = models.CharField(max_length=255, blank=True, null=True)
+    fecha_nacimiento = models.DateField(blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.nombre} {self.apellido}'
+
+class Cita(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE)
+    fecha = models.DateTimeField()
+
+    def __str__(self):
+        return f'{self.fecha} con {self.paciente.nombre}'
