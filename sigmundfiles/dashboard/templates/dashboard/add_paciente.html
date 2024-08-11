@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Paciente</title>
+    <style>
+        .form-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .form-section h3 {
+            margin-top: 0;
+        }
+
+        .hidden-section {
+            display: none;
+        }
+
+        .show-section-button {
+            cursor: pointer;
+            color: #007bff;
+            text-decoration: underline;
+            border: none;
+            background: none;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .form-section label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-section input, .form-section select, .form-section textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+        }
+    </style>
+    <script>
+        function toggleSection(sectionId) {
+            var section = document.getElementById(sectionId);
+            if (section.style.display === "none" || section.style.display === "") {
+                section.style.display = "block";
+            } else {
+                section.style.display = "none";
+            }
+        }
+    </script>
+</head>
+<body>
+
+{% block content %}
+    <h2>Agregar Paciente</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-section">
+            <h3>Información General</h3>
+            {{ form.foto.label_tag }} {{ form.foto }}
+            {{ form.nombre_completo.label_tag }} {{ form.nombre_completo }}
+            {{ form.edad.label_tag }} {{ form.edad }}
+            {{ form.genero.label_tag }} {{ form.genero }}
+            {{ form.fecha_nacimiento.label_tag }} {{ form.fecha_nacimiento }}
+            {{ form.lugar_nacimiento.label_tag }} {{ form.lugar_nacimiento }}
+            {{ form.escolaridad.label_tag }} {{ form.escolaridad }}
+            {{ form.estado_civil.label_tag }} {{ form.estado_civil }}
+            {{ form.correo.label_tag }} {{ form.correo }}
+            {{ form.telefono.label_tag }} {{ form.telefono }}
+            {{ form.direccion.label_tag }} {{ form.direccion }}
+            {{ form.religion.label_tag }} {{ form.religion }}
+            {{ form.acude_voluntariamente.label_tag }} {{ form.acude_voluntariamente }}
+        </div>
+
+        <div class="form-section">
+            <h3>Información de los Padres</h3>
+            {{ form.nombre_padre.label_tag }} {{ form.nombre_padre }}
+            {{ form.edad_padre.label_tag }} {{ form.edad_padre }}
+            {{ form.escolaridad_padre.label_tag }} {{ form.escolaridad_padre }}
+            {{ form.ocupacion_padre.label_tag }} {{ form.ocupacion_padre }}
+            {{ form.antecedentes_patologicos_padre.label_tag }} {{ form.antecedentes_patologicos_padre }}
+            {{ form.nombre_madre.label_tag }} {{ form.nombre_madre }}
+            {{ form.edad_madre.label_tag }} {{ form.edad_madre }}
+            {{ form.escolaridad_madre.label_tag }} {{ form.escolaridad_madre }}
+            {{ form.ocupacion_madre.label_tag }} {{ form.ocupacion_madre }}
+            {{ form.antecedentes_patologicos_madre.label_tag }} {{ form.antecedentes_patologicos_madre }}
+            {{ form.estado_civil_padres.label_tag }} {{ form.estado_civil_padres }}
+        </div>
+
+        <div class="form-section">
+            <h3>Información de los Hermanos</h3>
+            <button type="button" class="show-section-button" onclick="toggleSection('hermano1')">Agregar Hermano 1</button>
+            <div id="hermano1" class="hidden-section">
+                {{ form.nombre_hermano_1.label_tag }} {{ form.nombre_hermano_1 }}
+                {{ form.antecedentes_hermano_1.label_tag }} {{ form.antecedentes_hermano_1 }}
+                {{ form.edad_hermano_1.label_tag }} {{ form.edad_hermano_1 }}
+                {{ form.grado_escolar_hermano_1.label_tag }} {{ form.grado_escolar_hermano_1 }}
+                {{ form.antecedentes_patologicos_hermano_1.label_tag }} {{ form.antecedentes_patologicos_hermano_1 }}
+                {{ form.adicciones_hermano_1.label_tag }} {{ form.adicciones_hermano_1 }}
+            </div>
+            <button type="button" class="show-section-button" onclick="toggleSection('hermano2')">Agregar Hermano 2</button>
+            <div id="hermano2" class="hidden-section">
+                {{ form.nombre_hermano_2.label_tag }} {{ form.nombre_hermano_2 }}
+                {{ form.antecedentes_hermano_2.label_tag }} {{ form.antecedentes_hermano_2 }}
+                {{ form.edad_hermano_2.label_tag }} {{ form.edad_hermano_2 }}
+                {{ form.grado_escolar_hermano_2.label_tag }} {{ form.grado_escolar_hermano_2 }}
+                {{ form.antecedentes_patologicos_hermano_2.label_tag }} {{ form.antecedentes_patologicos_hermano_2 }}
+                {{ form.adicciones_hermano_2.label_tag }} {{ form.adicciones_hermano_2 }}
+            </div>
+            <button type="button" class="show-section-button" onclick="toggleSection('hermano3')">Agregar Hermano 3</button>
+            <div id="hermano3" class="hidden-section">
+                {{ form.nombre_hermano_3.label_tag }} {{ form.nombre_hermano_3 }}
+                {{ form.antecedentes_hermano_3.label_tag }} {{ form.antecedentes_hermano_3 }}
+                {{ form.edad_hermano_3.label_tag }} {{ form.edad_hermano_3 }}
+                {{ form.grado_escolar_hermano_3.label_tag }} {{ form.grado_escolar_hermano_3 }}
+                {{ form.antecedentes_patologicos_hermano_3.label_tag }} {{ form.antecedentes_patologicos_hermano_3 }}
+                {{ form.adicciones_hermano_3.label_tag }} {{ form.adicciones_hermano_3 }}
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>Otras Personas en el Hogar</h3>
+            {{ form.otras_personas_hogar.label_tag }} {{ form.otras_personas_hogar }}
+        </div>
+
+        <div class="form-section">
+            <h3>Historial Médico</h3>
+            {{ form.asma_alergias.label_tag }} {{ form.asma_alergias }}
+            {{ form.catarros_frecuentes.label_tag }} {{ form.catarros_frecuentes }}
+            {{ form.epilepsia_convulsiones.label_tag }} {{ form.epilepsia_convulsiones }}
+            {{ form.convulsiones_febriles.label_tag }} {{ form.convulsiones_febriles }}
+            {{ form.manias.label_tag }} {{ form.manias }}
+            {{ form.lesiones_cabeza.label_tag }} {{ form.lesiones_cabeza }}
+            {{ form.cirugias_hospitalizacion.label_tag }} {{ form.cirugias_hospitalizacion }}
+            {{ form.problemas_vision.label_tag }} {{ form.problemas_vision }}
+            {{ form.problemas_apetito.label_tag }} {{ form.problemas_apetito }}
+        </div>
+
+        <button type="submit">Guardar Paciente</button>
+    </form>
+{% endblock %}
+
+</body>
+</html>
