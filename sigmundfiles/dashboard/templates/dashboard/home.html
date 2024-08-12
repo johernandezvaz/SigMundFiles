@@ -8,7 +8,7 @@
         <meta content="Vetra - Webflow Ecommerce website template" property="twitter:title"/>
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
         <meta content="Webflow" name="generator"/>
-        <link href="{% static 'css/home.css' %}" rel="stylesheet" type="text/css"/>
+        <link href="{% static 'css/main.css' %}" rel="stylesheet" type="text/css"/>
         <link href="https://fonts.googleapis.com" rel="preconnect"/>
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin="anonymous"/>
         <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js" type="text/javascript"></script>
@@ -37,7 +37,15 @@
                     <a href="/" aria-current="page" class="nav-brand-logo-wrapper w-nav-brand w--current">
                         <img src="{% static 'logo2.png' %}" loading="lazy" alt="Logo" class="nav-brand-logo"/>
                     </a>
-                    <div class="nav-menu-wrapper">                        
+                    <div class="nav-menu-wrapper">
+                        <nav role="navigation" class="nav-menu w-nav-menu">
+                            <a href="/" aria-current="page" class="nav-link w-nav-link w--current">Inicio</a>
+                            <a href="#nosotros" class="nav-link w-nav-link">Nosostros</a>
+                            <a href="#porque-nosotros" class="nav-link w-nav-link">¿Porqué nosotros?</a>
+                            <a href="#servicios" class="nav-link w-nav-link">Servicios</a>
+                            <a href="#registrate" class="nav-link w-nav-link">Registrate</a>
+                        </nav>                        
+                        
                     <div class="nav-right-content">
                         <a href="{% url 'login' %}" class="button show-desktop w-button">Inicia Sesión</a>
                         <div data-w-id="e168f2fc-0648-fab5-15a4-c410a80ef829" class="menu-button w-nav-button">
@@ -50,177 +58,146 @@
                     </div>
                 </div>
             </div>
-        <div class="main-wrapper">
-            <div class="section-hero">
-                <div class="padding-global">
-                    <div class="container-large">
-                        <div class="hero-component">
-                            <div class="hero-top-content-wrapper">
-                                <div data-w-id="66ac8272-0567-86d1-1a1e-11f83f2bb387" style="opacity:0" class="hero-top-left-content">
-                                    <h1 class="heading-style-h1">Plataforma de Registro Médico para Psicólogos</h1>
-                                    <div class="padding-bottom padding-small"></div>
-                                    <div class="text-size-regular">Sigmundfiles es una innovadora plataforma digital diseñada para la creación y gestión de registros médicos en el ámbito de la psicología. Nuestro principal objetivo es mejorar la eficiencia de los psicólogos mediante la digitalización de notas clínicas y el uso de inteligencia artificial para identificar patrones lingüísticos relevantes.</div>
+            <section id = "main">
+                <div class="main-wrapper">
+                    <div class="section-hero">
+                        <div class="padding-global">
+                            <div class="container-large">
+                                <div class="hero-component">
+                                    <div class="hero-top-content-wrapper">
+                                        <div data-w-id="66ac8272-0567-86d1-1a1e-11f83f2bb387" style="opacity:0" class="hero-top-left-content">
+                                            <h1 class="heading-style-h1">Plataforma de Registro Médico para Psicólogos</h1>
+                                            <div class="padding-bottom padding-small"></div>
+                                            <div class="text-size-regular">Sigmundfiles es una innovadora plataforma digital diseñada para la creación y gestión de registros médicos en el ámbito de la psicología. Nuestro principal objetivo es mejorar la eficiencia de los psicólogos mediante la digitalización de notas clínicas y el uso de inteligencia artificial para identificar patrones lingüísticos relevantes.</div>
+                                            <div class="padding-bottom padding-medium"></div>
+                                            <a href="/contact" class="button is-secondary w-inline-block">
+                                                <div>Aprende Más</div>
+                                            </a>
+                                        </div>
+                                        <img class="hero-image" src="{% static 'hero-section.jpg' %}" alt="" style="opacity:0" sizes="(max-width: 479px) 93vw, (max-width: 991px) 94vw, 588px" data-w-id="9ae10bc2-a0cd-7c25-24d7-8450328e87fa" loading="lazy" />
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </section>
+            <section id="porque-nosotros">
+
+                <div class="section-why-choose-us">
+                    <div class="padding-global">
+                        <div class="container-large">
+                            <div class="padding-section-large">
+                                <div class="why-choose-us-component">
+                                    <div class="why-choose-us-top-content">
+                                        <h2 data-w-id="a576c34c-609b-0f75-f313-6d13f33e1c07" style="opacity:0" class="heading-style-h2">¿Por qué elegir Sigmundfiles para la gestión de tus registros médicos?</h2>
+                                    </div>
+                                    <div class="padding-bottom padding-large"></div>
+                                    <div data-w-id="000e1f91-d6c2-084b-6ffc-e91f221c1b7e" style="opacity:0;-webkit-transform:translate3d(0, 170px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 170px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 170px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 170px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="why-choose-us-bottom-content">
+                                        <div class="why-choose-us-card">
+                                            <div class="why-choose-us-image _1st"></div>
+                                            <div class="why-choose-us-card-content">
+                                                <h4 class="heading-style-h4 why-choose-us-card">Innovación y Precisión en el Registro Clínico</h4>
+                                            </div>
+                                            <div class="why-choose-us-ovely"></div>
+                                        </div>
+                                        <div style="-webkit-transform:translate3d(-399px, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(-399px, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(-399px, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(-399px, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="why-choose-us-card _2nd">
+                                            <div class="why-choose-us-image _2nd"></div>
+                                            <div class="why-choose-us-card-content">
+                                                <h4 class="heading-style-h4 why-choose-us-card">Seguridad y Privacidad Garantizadas</h4>
+                                            </div>
+                                            <div class="why-choose-us-ovely _02"></div>
+                                        </div>
+                                        <div style="-webkit-transform:translate3d(-799px, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(-799px, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(-799px, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(-799px, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="why-choose-us-card _3rd">
+                                            <div class="why-choose-us-image _3rd"></div>
+                                            <div class="why-choose-us-card-content">
+                                                <h4 class="heading-style-h4 why-choose-us-card">Optimización del Tiempo del Psicólogo</h4>
+                                            </div>
+                                            <div class="why-choose-us-ovely _03"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>            
+            </section>
+            <section id="servicios">
+
+                <div class="section-service">
+                    <div class="padding-global">
+                        <div class="container-large">
+                            <div class="padding-section-large">
+                                <div class="service-component">
+                                    <div class="service-top-content">
+                                        <h2 data-w-id="f720213c-f2a6-bd67-da04-1d3621a1d19b" class="heading-style-h2">Servicios especializados para la gestión de tus registros médicos.</h2>
+                                    </div>
+                                    <div class="padding-bottom padding-large"></div>
+                                    <div data-w-id="f720213c-f2a6-bd67-da04-1d3621a1d19e" class="service-collection-list-wrapper w-dyn-list">
+                                        <div role="list" class="service-collection-list w-dyn-items">
+                                            <div role="listitem" class="service-collection-list-item w-dyn-item">
+                                                <div class="service-card">
+                                                    <img src="{% static 'svg/searching.png' %}" loading="lazy" alt=""/>
+                                                    <div class="service-card-content-wrapper">
+                                                        <div class="service-card-content">
+                                                            <h5 class="heading-style-h5">Detección de Caracteres</h5>
+                                                            <div class="text-size-small">Transforma tus notas manuscritas en texto digital editable con nuestra tecnología avanzada de detección de caracteres.</div>
+                                                        </div>
+                                                        <div class="padding-bottom padding-medium"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div role="listitem" class="service-collection-list-item w-dyn-item">
+                                                <div class="service-card">
+                                                    <img src="{% static 'svg/documents.png' %}" loading="lazy" alt=""/>
+                                                    <div class="service-card-content-wrapper">
+                                                        <div class="service-card-content">
+                                                            <h5 class="heading-style-h5">Análisis de Texto</h5>
+                                                            <div class="text-size-small">Genera nubes de palabras y estadísticas clave a partir de tus notas clínicas para obtener resultados valiosos.</div>
+                                                        </div>
+                                                        <div class="padding-bottom padding-medium"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div role="listitem" class="service-collection-list-item w-dyn-item">
+                                                <div class="service-card">
+                                                    <img src="{% static 'svg/user.png' %}" loading="lazy" alt=""/>
+                                                    <div class="service-card-content-wrapper">
+                                                        <div class="service-card-content">
+                                                            <h5 class="heading-style-h5">Gestión de Pacientes</h5>
+                                                            <div class="text-size-small">Administra y organiza fácilmente los historiales clínicos de tus pacientes con nuestra interfaz intuitiva.</div>
+                                                        </div>
+                                                        <div class="padding-bottom padding-medium"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="padding-bottom padding-large"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>            
+            </section>
+            <section id="registrate">
+                <div class="section-cta">
+                    <div class="padding-global">
+                        <div class="container-large">
+                            <div class="padding-section-large">
+                                <div data-w-id="c132c852-bb40-d4d1-3e36-1286ae6804aa" class="cta-component">
+                                    <h2 class="heading-style-h2 text-color-white">Forma parte de SigmundFiles</h2>
                                     <div class="padding-bottom padding-medium"></div>
-                                    <a href="/contact" class="button is-secondary w-inline-block">
-                                        <div>Aprende Más</div>
+                                    <a href="{% url 'register' %}" class="button is-secondary w-inline-block">
+                                        <div>Registrate</div>
                                     </a>
                                 </div>
-                                <img class="hero-image" src="{% static 'hero-section.jpg' %}" alt="" style="opacity:0" sizes="(max-width: 479px) 93vw, (max-width: 991px) 94vw, 588px" data-w-id="9ae10bc2-a0cd-7c25-24d7-8450328e87fa" loading="lazy" />
-                            </div>
-                            
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="section-about is-home">
-                <div class="padding-global">
-                    <div class="container-large">
-                        <div class="padding-section-large">
-                            <div class="about-component">
-                                <div data-w-id="e276fcd4-83bb-af63-332c-81c34ffff2db" style="opacity:0" class="about-image-wrapper in-home">
-                                    <img src="https://cdn.prod.website-files.com/6688ba769ddc05c1769483ff/66929b6461743544f919433a_About%201.webp" loading="lazy" sizes="(max-width: 479px) 93vw, 229px" srcset="https://cdn.prod.website-files.com/6688ba769ddc05c1769483ff/66929b6461743544f919433a_About%201-p-500.webp 500w, https://cdn.prod.website-files.com/6688ba769ddc05c1769483ff/66929b6461743544f919433a_About%201.webp 718w" alt="" class="about-image _1st"/>
-                                    <div class="about-line"></div>
-                                    <img src="https://cdn.prod.website-files.com/6688ba769ddc05c1769483ff/66929b61fd64efeecc686540_About%202.webp" loading="lazy" sizes="(max-width: 479px) 100vw, 174px" srcset="https://cdn.prod.website-files.com/6688ba769ddc05c1769483ff/66929b61fd64efeecc686540_About%202-p-500.webp 500w, https://cdn.prod.website-files.com/6688ba769ddc05c1769483ff/66929b61fd64efeecc686540_About%202.webp 550w" alt="" class="about-image _2nd"/>
-                                    <div class="about-line"></div>
-                                    <img src="https://cdn.prod.website-files.com/6688ba769ddc05c1769483ff/66929b58bfada20500018f92_About%203.webp" loading="lazy" sizes="(max-width: 767px) 100vw, 183px" srcset="https://cdn.prod.website-files.com/6688ba769ddc05c1769483ff/66929b58bfada20500018f92_About%203-p-500.webp 500w, https://cdn.prod.website-files.com/6688ba769ddc05c1769483ff/66929b58bfada20500018f92_About%203.webp 575w" alt="" class="about-image _3rd"/>
-                                </div>
-                                <div data-w-id="9f08fba9-6b84-75c1-bcc6-0b5f6ff0eaf0" style="opacity:0" class="about-right-content">
-                                    <h2 class="heading-style-h2">Our commitment to your pet &#x27;s health and happiness.</h2>
-                                    <div class="padding-bottom padding-small"></div>
-                                    <p class="text-size-regular">Cursus leo dui euismod venenatis adipiscing et. Sed tristique fusce tortor elementum. Tellus in in aliquet et justo fermentum scelerisque amet. Scelerisque maecenas faucibus enim cras ut risus id.</p>
-                                    <div class="padding-bottom padding-medium"></div>
-                                    <a href="/about" class="button w-inline-block">
-                                        <div>Learn More</div>
-                                    </a>
-                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="section-service">
-                <div class="padding-global">
-                    <div class="container-large">
-                        <div class="padding-section-large">
-                            <div class="service-component">
-                                <div class="service-top-content">
-                                    <h2 data-w-id="f720213c-f2a6-bd67-da04-1d3621a1d19b" class="heading-style-h2">Comprehensive care for your beloved pets.</h2>
-                                </div>
-                                <div class="padding-bottom padding-large"></div>
-                                <div data-w-id="f720213c-f2a6-bd67-da04-1d3621a1d19e" class="service-collection-list-wrapper w-dyn-list">
-                                    <div role="list" class="service-collection-list w-dyn-items">
-                                        <div role="listitem" class="service-collection-list-item w-dyn-item">
-                                            <div class="service-card">
-                                                <img src="https://cdn.prod.website-files.com/6688c6671447544ef8f1c79e/6688c763727076417d8ce908_Service%20Icon%206.svg" loading="lazy" alt=""/>
-                                                <div class="service-card-content-wrapper">
-                                                    <div class="service-card-content">
-                                                        <h5 class="heading-style-h5">Wellness Exams</h5>
-                                                        <div class="text-size-small">Adipiscing molestie in tincidunt ac tellus leo accumsan scelerisque congue.</div>
-                                                    </div>
-                                                    <div class="padding-bottom padding-medium"></div>
-                                                    <a href="/service/wellness-exams" class="service-read-more-button w-inline-block">
-                                                        <div>Learn more</div>
-                                                        <img src="https://cdn.prod.website-files.com/6688ba769ddc05c1769483ff/6688e0011598061024ead05a_Arrow-Right.svg" loading="lazy" alt=""/>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div role="listitem" class="service-collection-list-item w-dyn-item">
-                                            <div class="service-card">
-                                                <img src="https://cdn.prod.website-files.com/6688c6671447544ef8f1c79e/6688c74b1447544ef8f22ced_Service%20Icon%205.svg" loading="lazy" alt=""/>
-                                                <div class="service-card-content-wrapper">
-                                                    <div class="service-card-content">
-                                                        <h5 class="heading-style-h5">Vaccinations</h5>
-                                                        <div class="text-size-small">Badipiscing molestie in tincidunt ac tellus leo accumsan scelerisque congue.</div>
-                                                    </div>
-                                                    <div class="padding-bottom padding-medium"></div>
-                                                    <a href="/service/vaccinations" class="service-read-more-button w-inline-block">
-                                                        <div>Learn more</div>
-                                                        <img src="https://cdn.prod.website-files.com/6688ba769ddc05c1769483ff/6688e0011598061024ead05a_Arrow-Right.svg" loading="lazy" alt=""/>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div role="listitem" class="service-collection-list-item w-dyn-item">
-                                            <div class="service-card">
-                                                <img src="https://cdn.prod.website-files.com/6688c6671447544ef8f1c79e/6688c737b6b743ea9d437553_Service%20Icon%204.svg" loading="lazy" alt=""/>
-                                                <div class="service-card-content-wrapper">
-                                                    <div class="service-card-content">
-                                                        <h5 class="heading-style-h5">Grooming Service</h5>
-                                                        <div class="text-size-small">Redipiscing molestie in tincidunt ac tellus leo accumsan scelerisque congue.</div>
-                                                    </div>
-                                                    <div class="padding-bottom padding-medium"></div>
-                                                    <a href="/service/grooming-service" class="service-read-more-button w-inline-block">
-                                                        <div>Learn more</div>
-                                                        <img src="https://cdn.prod.website-files.com/6688ba769ddc05c1769483ff/6688e0011598061024ead05a_Arrow-Right.svg" loading="lazy" alt=""/>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="padding-bottom padding-large"></div>
-                                <a href="/services" class="button w-inline-block">
-                                    <div>View all Services</div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="section-why-choose-us">
-                <div class="padding-global">
-                    <div class="container-large">
-                        <div class="padding-section-large">
-                            <div class="why-choose-us-component">
-                                <div class="why-choose-us-top-content">
-                                    <h2 data-w-id="a576c34c-609b-0f75-f313-6d13f33e1c07" style="opacity:0" class="heading-style-h2">Why choose us for your pet &#x27;s care.</h2>
-                                </div>
-                                <div class="padding-bottom padding-large"></div>
-                                <div data-w-id="000e1f91-d6c2-084b-6ffc-e91f221c1b7e" style="opacity:0;-webkit-transform:translate3d(0, 170px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 170px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 170px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 170px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="why-choose-us-bottom-content">
-                                    <div class="why-choose-us-card">
-                                        <div class="why-choose-us-image _1st"></div>
-                                        <div class="why-choose-us-card-content">
-                                            <h4 class="heading-style-h4 why-choose-us-card">Experienced and Compassionate Staff</h4>
-                                        </div>
-                                        <div class="why-choose-us-ovely"></div>
-                                    </div>
-                                    <div style="-webkit-transform:translate3d(-399px, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(-399px, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(-399px, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(-399px, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="why-choose-us-card _2nd">
-                                        <div class="why-choose-us-image _2nd"></div>
-                                        <div class="why-choose-us-card-content">
-                                            <h4 class="heading-style-h4 why-choose-us-card">State-of-the-Art Facilities</h4>
-                                        </div>
-                                        <div class="why-choose-us-ovely _02"></div>
-                                    </div>
-                                    <div style="-webkit-transform:translate3d(-799px, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(-799px, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(-799px, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(-799px, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="why-choose-us-card _3rd">
-                                        <div class="why-choose-us-image _3rd"></div>
-                                        <div class="why-choose-us-card-content">
-                                            <h4 class="heading-style-h4 why-choose-us-card">Comprehensive Health Services</h4>
-                                        </div>
-                                        <div class="why-choose-us-ovely _03"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="section-cta">
-                <div class="padding-global">
-                    <div class="container-large">
-                        <div class="padding-section-large">
-                            <div data-w-id="c132c852-bb40-d4d1-3e36-1286ae6804aa" class="cta-component">
-                                <h2 class="heading-style-h2 text-color-white">Forma parte de SigmundFiles</h2>
-                                <div class="padding-bottom padding-medium"></div>
-                                <a href="{% url 'register' %}" class="button is-secondary w-inline-block">
-                                    <div>Registrate</div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="section-team">
+            </section>
+            <!-- <div class="section-team">
                 <div class="padding-global">
                     <div class="container-large">
                         <div class="padding-section-large">
@@ -506,7 +483,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
         <div class="section-footer">
             <div class="padding-global">
                 <div class="container-large">
@@ -514,10 +491,9 @@
                         <div class="w-layout-grid footer-grid">
                             <div id="w-node-_341d2c33-ae83-d37f-f2f6-6b452ce47d39-2ce47d34" class="footer-left-content-wrapper">
                                 <a href="/" aria-current="page" class="footer-brand-logo w-inline-block w--current">
-                                    <img src="https://cdn.prod.website-files.com/6688ba769ddc05c1769483ff/6688e0006ea894767c270d88_Footer%20Logo.svg" loading="lazy" alt=""/>
+                                    <img src="{% static 'logo2.png' %}" loading="lazy" alt=""/>
                                 </a>
                                 <div class="footer-left-content">
-                                    <h6 class="heading-style-h6 text-color-white-300">Our Newsletter</h6>
                                     <div class="footer-form-block w-form">
                                         <!-- <form id="email-form" name="email-form" data-name="Email Form" method="get" class="footer-form" data-wf-page-id="6688ba769ddc05c176948405" data-wf-element-id="341d2c33-ae83-d37f-f2f6-6b452ce47d40">
                                             <input class="footer-input w-input" maxlength="256" name="email-2" data-name="Email 2" placeholder="Email address..." type="email" id="email-2" required=""/>
@@ -533,34 +509,31 @@
                                 </div>
                             </div>
                             <div id="w-node-_341d2c33-ae83-d37f-f2f6-6b452ce47d49-2ce47d34" class="footer-link-list">
-                                <a href="/" aria-current="page" class="footer-link w--current">Home page</a>
-                                <a href="/about" class="footer-link">About page</a>
-                                <a href="/services" class="footer-link">Service</a>
-                                <a href="/contact" class="footer-link">Contact page</a>
-                                <a href="/blog" class="footer-link">Blog</a>
-                                <a href="/price" class="footer-link">Price</a>
-                                <a href="/shop" class="footer-link">Shop</a>
-                                <a href="/doctor" class="footer-link last">Doctors</a>
+                                <a href="/" aria-current="page" class="footer-link w--current">Inicio</a>
+                                <a href="#main" class="footer-link">Nosotros</a>
+                                <a href="#porque-nosotros" class="footer-link">¿Porque nosotros?</a>
+                                <a href="#servicios" class="footer-link">Servicios</a>
+                                <a href="#registrate" class="footer-link">Registrate</a>
                             </div>
-                            <div id="w-node-_341d2c33-ae83-d37f-f2f6-6b452ce47d63-2ce47d34" class="footer-link-list">
+                            <!-- <div id="w-node-_341d2c33-ae83-d37f-f2f6-6b452ce47d63-2ce47d34" class="footer-link-list">
                                 <a href="/style-guide" class="footer-link">Style guide</a>
                                 <a href="/change-log" class="footer-link">Changelog</a>
                                 <a href="/license" class="footer-link">Licenses</a>
                                 <a href="https://vetra.webflow.io/401" class="footer-link">Protected</a>
                                 <a href="https://vetra.webflow.io/404" class="footer-link last">404 not found</a>
-                            </div>
+                            </div>  -->
                             <div id="w-node-_339b93cc-7121-c062-4e14-8125a8a6bcc2-2ce47d34" class="footer-quick-contact-list">
                                 <a href="https://www.google.com/maps/@24.8816156,88.9232991,13.3z?entry=ttu" class="footer-quick-contact-link w-inline-block">
-                                    <img src="https://cdn.prod.website-files.com/6688ba769ddc05c1769483ff/6688e00093250e3d768f26c0_Location%20Icon.svg" loading="lazy" alt=""/>
-                                    <div>2693 Calvin Street Hanover</div>
+                                    <img src="{% static 'svg/placeholder.png' %}" loading="lazy" alt=""/>
+                                    <div>Chihuahua, Chihuahua</div>
                                 </a>
-                                <a href="mailto:mufratnir1236@gmail.com" class="footer-quick-contact-link w-inline-block">
-                                    <img src="https://cdn.prod.website-files.com/6688ba769ddc05c1769483ff/6688e00093250e3d768f266a_Mail%20Icon.svg" loading="lazy" alt=""/>
-                                    <div>contact@vetra.com</div>
+                                <a href="#" class="footer-quick-contact-link w-inline-block">
+                                    <img src="{% static 'svg/mail.png' %}" loading="lazy" alt=""/>
+                                    <div>contacto@sigmundfiles.com</div>
                                 </a>
-                                <a href="tel:01954643967" class="footer-quick-contact-link w-inline-block">
-                                    <img src="https://cdn.prod.website-files.com/6688ba769ddc05c1769483ff/6688e0006ea894767c270cf3_Phone%20Icon.svg" loading="lazy" alt=""/>
-                                    <div>+880 17 0401 0405</div>
+                                <a href="tel:6141234567" class="footer-quick-contact-link w-inline-block">
+                                    <img src="{% static 'svg/phone.png' %}" loading="lazy" alt=""/>
+                                    <div>+614 123 45 67</div>
                                 </a>
                             </div>
                         </div>
@@ -568,8 +541,7 @@
                     </div>
                     <div class="footer-bottom-content">
                         <div class="text-size-regular text-color-white-400">
-                            Designed by <a href="https://webocean.io/" class="website-link">Webocean</a>
-                            | Powered by <a href="https://webflow.com/" class="website-link">Webflow</a>
+                            Deiseñado por <a href="/" class="website-link">SigmundFiles</a>
                         </div>
                         <div class="footer-social-icon-wrapper">
                             <a href="https://www.facebook.com/" target="_blank" class="footer-social-icon w-inline-block">

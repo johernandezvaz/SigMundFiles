@@ -2104,13 +2104,13 @@ textarea.w-input, textarea.w-select {
   --neutral--black-900: #4c8ebc;
   --neutral--white-200: #f3f3f8;
   --neutral--black-600: #7098a5;
-  --brand--light-acua: #c7eee6;
+  --brand--light-acua: #77E4C8;
   --neutral--white-400: #b4b4c9;
   --neutral--white-500: #8888a3;
   --neutral--white-300: #dcdce7;
-  --secondary--light-red: #E78EA9;
-  --secondary--light-yellow: #fce5cd;
-  --secondary--light-purple: #e4d6f0;
+  --secondary--light-red: #FFCAD4;
+  --secondary--light-yellow: #FDFFC2;
+  --secondary--light-purple: #8576FF;
 }
 
 .w-layout-grid {
@@ -4574,7 +4574,7 @@ blockquote {
 }
 
 .why-choose-us-image {
-  background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(0, 0, 0, .3)), url("https://cdn.prod.website-files.com/6688ba769ddc05c1769483ff/6688e004b3f9fb640cbd0028_Choose%203.png");
+  background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(0, 0, 0, .3)), url("../sigmundfiles-1.jpg");
   background-position: 0 0, 50%;
   background-repeat: repeat, no-repeat;
   background-size: auto, cover;
@@ -4583,18 +4583,18 @@ blockquote {
 }
 
 .why-choose-us-image._1st {
-  background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(0, 0, 0, .3)), url("https://cdn.prod.website-files.com/6688ba769ddc05c1769483ff/6688e004b3f9fb640cbd0028_Choose%203.png");
+  background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(0, 0, 0, .3)), url("../sigmundfiles-1.jpg");
 }
 
 .why-choose-us-image._2nd {
-  background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(0, 0, 0, .3)), url("https://cdn.prod.website-files.com/6688ba769ddc05c1769483ff/6688e00490f89437c7d8d93b_Choose%202.webp");
+  background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(0, 0, 0, .3)), url("../sigmundfiles-2.jpg");
   background-position: 0 0, 50%;
   background-repeat: repeat, no-repeat;
   background-size: auto, cover;
 }
 
 .why-choose-us-image._3rd {
-  background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(0, 0, 0, .3)), url("https://cdn.prod.website-files.com/6688ba769ddc05c1769483ff/6688e00272cd9eb109bd4e79_Choose%201.png");
+  background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(0, 0, 0, .3)), url("../sigmundfiles-3.jpg");
 }
 
 .why-choose-us-card-content {
@@ -4624,7 +4624,7 @@ blockquote {
 }
 
 .section-cta {
-  background-color: var(--neutral--black-900);
+  background-image: url("../pattern.png");
   opacity: 0.9;
   background-position: 0 0;
   background-repeat: no-repeat;
@@ -4928,7 +4928,7 @@ blockquote {
 }
 
 .section-footer {
-  background-color: var(--neutral--black-900);
+  background-color: var(--neutral--white-200);
   padding-top: 6.25rem;
   padding-bottom: 1.875rem;
 }
@@ -4959,7 +4959,7 @@ blockquote {
 }
 
 .footer-input {
-  background-color: var(--neutral--black-700);
+  background-color: var(--neutral--white-200);
   color: var(--neutral--white);
   border: 1px #000;
   height: 2.75rem;
