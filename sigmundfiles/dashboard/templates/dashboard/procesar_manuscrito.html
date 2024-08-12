@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- dashboard/templates/dashboard/procesar_manuscrito.html -->
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Subir y Procesar</button>
+    </form>
+    
+    {% if manuscrito.texto %}
+    <form method="post">
+        {% csrf_token %}
+        <textarea name="texto" rows="10">{{ manuscrito.texto }}</textarea>
+        <button type="submit">Generar Nube de Palabras</button>
+    </form>
+    <img src="{{ nube_de_palabras_url }}" alt="Nube de Palabras">
+    {% endif %}
+    
+</body>
+</html>

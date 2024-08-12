@@ -22,6 +22,6 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('dashboard.urls')),  # Incluye las URLs de la app dashboard
-    path('ocr/', include('ocr_app.urls')),  
+    # path('ocr/', include('ocr_app.urls')),  
     path('dashboard/', include('dashboard.urls')),  # Asegúrate de que la ruta dashboard esté accesible
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

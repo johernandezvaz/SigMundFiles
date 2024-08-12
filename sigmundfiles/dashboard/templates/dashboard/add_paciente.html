@@ -1,58 +1,12 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agregar Paciente</title>
-    <style>
-        .form-section {
-            margin-bottom: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .form-section h3 {
-            margin-top: 0;
-        }
-
-        .hidden-section {
-            display: none;
-        }
-
-        .show-section-button {
-            cursor: pointer;
-            color: #007bff;
-            text-decoration: underline;
-            border: none;
-            background: none;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .form-section label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .form-section input, .form-section select, .form-section textarea {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border-radius: 3px;
-            border: 1px solid #ccc;
-        }
-    </style>
-    <script>
-        function toggleSection(sectionId) {
-            var section = document.getElementById(sectionId);
-            if (section.style.display === "none" || section.style.display === "") {
-                section.style.display = "block";
-            } else {
-                section.style.display = "none";
-            }
-        }
-    </script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/patients.css' %}">
+    <script src="{% static 'js/patients.js' %}"></script>
 </head>
 <body>
 
@@ -65,9 +19,9 @@
             <h3>Información General</h3>
             {{ form.foto.label_tag }} {{ form.foto }}
             {{ form.nombre_completo.label_tag }} {{ form.nombre_completo }}
-            {{ form.edad.label_tag }} {{ form.edad }}
             {{ form.genero.label_tag }} {{ form.genero }}
             {{ form.fecha_nacimiento.label_tag }} {{ form.fecha_nacimiento }}
+            {{ form.edad.label_tag }} {{ form.edad }}
             {{ form.lugar_nacimiento.label_tag }} {{ form.lugar_nacimiento }}
             {{ form.escolaridad.label_tag }} {{ form.escolaridad }}
             {{ form.estado_civil.label_tag }} {{ form.estado_civil }}

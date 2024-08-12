@@ -1,8 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
-from .forms import UserRegistrationForm, UserLoginForm, CitaForm, PacienteForm
+from .forms import UserRegistrationForm, UserLoginForm, CitaForm, PacienteForm, ManuscritoForm
 from django.contrib.auth.decorators import login_required
-from .models import Paciente, Cita
+from .models import Paciente, Cita, Manuscrito
+import pytesseract
+from PIL import Image
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
 
 def register(request):
     if request.method == 'POST':
@@ -25,7 +29,6 @@ def login_view(request):
         form = UserLoginForm()
     return render(request, 'dashboard/login.html', {'form': form})
 
-
 def home(request):
     return render(request, 'dashboard/home.html')
 
@@ -36,9 +39,11 @@ def logout_view(request):
 @login_required
 def dashboard_view(request):
     user = request.user
-    pacientes = Paciente.objects.filter(usuario=user)
-    citas = Cita.objects.filter(usuario=user)
-
+    citas = Cita.objects.filter(email=user)
+    
+    # Obtener los pacientes asociados a las citas del usuario
+    pacientes = Paciente.objects.filter(cita__in=citas).distinct()
+    
     context = {
         'pacientes': pacientes,
         'citas': citas,
@@ -65,7 +70,6 @@ def agregar_cita_view(request):
 
     return render(request, 'dashboard/agregar_cita.html', {'form': form, 'pacientes': pacientes})
 
-
 @login_required
 def agregar_paciente_view(request):
     if request.method == 'POST':
@@ -78,3 +82,34 @@ def agregar_paciente_view(request):
     else:
         form = PacienteForm()
     return render(request, 'dashboard/add_paciente.html', {'form': form})
+
+# Nueva función para procesar manuscritos
+@login_required
+def procesar_manuscrito(request, paciente_id):
+    if request.method == 'POST':
+        form = ManuscritoForm(request.POST, request.FILES)
+        if form.is_valid():
+            manuscrito = form.save(commit=False)
+            manuscrito.paciente_id = paciente_id
+
+            # Procesar la imagen con OCR
+            imagen = manuscrito.imagen
+            img = Image.open(imagen)
+            texto = pytesseract.image_to_string(img)
+
+            # Guardar el texto extraído
+            manuscrito.texto = texto
+            manuscrito.save()
+            return redirect('detalle_paciente', paciente_id=paciente_id)
+    else:
+        form = ManuscritoForm()
+    return render(request, 'dashboard/procesar_manuscrito.html', {'form': form})
+
+# Nueva función para generar la nube de palabras
+def generar_nube_de_palabras(texto):
+    wordcloud = WordCloud(width=800, height=400, background_color='white').generate(texto)
+    plt.figure(figsize=(10, 5))
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis('off')
+    plt.savefig('media/wordclouds/nube_de_palabras.png')
+    plt.close()
