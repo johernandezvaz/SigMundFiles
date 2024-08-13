@@ -14,7 +14,7 @@ h2 {
 }
 
 form {
-    max-width: 800px;
+    max-width: 100%;
     margin: 0 auto;
     background: #fff;
     padding: 20px;
@@ -24,6 +24,7 @@ form {
 
 .form-section {
     margin-bottom: 20px;
+    width: 1080px;
 }
 
 .form-section h3 {

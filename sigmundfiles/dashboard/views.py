@@ -38,17 +38,14 @@ def logout_view(request):
 
 @login_required
 def dashboard_view(request):
-    user = request.user
-    citas = Cita.objects.filter(email=user)
-    
-    # Obtener los pacientes asociados a las citas del usuario
-    pacientes = Paciente.objects.filter(cita__in=citas).distinct()
-    
+    pacientes = Paciente.objects.all()  # Obtener todos los pacientes
     context = {
         'pacientes': pacientes,
-        'citas': citas,
     }
     return render(request, 'dashboard/dashboard.html', context)
+
+
+
 
 @login_required
 def agregar_cita_view(request):
@@ -73,15 +70,18 @@ def agregar_cita_view(request):
 @login_required
 def agregar_paciente_view(request):
     if request.method == 'POST':
-        form = PacienteForm(request.POST)
+        form = PacienteForm(request.POST, request.FILES)  # Incluye request.FILES aquí
         if form.is_valid():
             paciente = form.save(commit=False)
             paciente.usuario = request.user
             paciente.save()
             return redirect('dashboard')
+        else:
+            print(form.errors)  # Esto te ayudará a ver si hay errores de validación
     else:
         form = PacienteForm()
     return render(request, 'dashboard/add_paciente.html', {'form': form})
+
 
 # Nueva función para procesar manuscritos
 @login_required
