@@ -196,7 +196,7 @@
                             <p>Problemas de Apetito: {{ salud.problemas_apetito }}</p>
                         {% endfor %}
                     </div>
-                    
+
                     <div id="tab6" class="tab">
                         <h3>Notas Transcritas</h3>
                         {% for cita in paciente.citas.all %}
@@ -208,7 +208,7 @@
                     
                         <!-- Textarea para agregar notas transcritas manualmente -->
                         <h3>Agregar Nueva Nota</h3>
-                        <form method="POST" action="{% url 'agregar_nota' paciente.id %}">
+                        <form method="POST" action="{% url 'agregar_nota_view' paciente.id %}">
                             {% csrf_token %}
                             <textarea name="nueva_nota" rows="4" cols="50" placeholder="Escribe una nueva nota..."></textarea>
                             <button type="submit" class="btn-pacientes">Guardar Nota</button>
