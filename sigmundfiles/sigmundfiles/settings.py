@@ -56,7 +56,10 @@ AUTH_USER_MODEL = 'dashboard.User'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-
+AUTHENTICATION_BACKENDS = (
+    'dashboard.backends.EmailBackend',  # Sustituye 'myapp' por el nombre de tu aplicación
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

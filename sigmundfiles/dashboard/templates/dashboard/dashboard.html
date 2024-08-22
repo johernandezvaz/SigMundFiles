@@ -3,12 +3,11 @@
 <html>
 <head>
     <title>Dashboard</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dash1.css' %}">
     <script src="{% static 'js/index.js' %}"></script>
     <link href="{% static 'favicon.png' %}" rel="shortcut icon" type="image/x-icon"/>
     <link href="{% static 'favicon.png' %}" rel="apple-touch-icon"/> 
-    <link href="{% static 'favicon.png' %}" rel="shortcut icon" type="image/x-icon"/>
-    <link href="{% static 'favicon.png' %}" rel="apple-touch-icon"/> 
+   
 </head>
 
 <body class="dashboard">
@@ -24,48 +23,89 @@
             <div class="folder-icons">
                 <a class="icon-name" href="{% url 'agregar_paciente' %}">Agregar Paciente</a>
             </div>
-            <div class="folder-icons">
-                <a class="icon-name" href="{% url 'agregar_cita' %}">Agregar Cita</a>
-            </div>
-            <div class="folder-icons">
-                <a class="icon-name" href="{% url 'procesar_manuscrito' %}">Escanear Imágenes</a>
-            </div>
         </div>
     </div>
   </div>
   <div class="right-side wrapper">
       <div class="top-bar-justify">
           <h1 class="big-inbox">Bienvenido, {{ user.nombre }} {{ user.apellidos }}</h1> <!-- Display psychologist's name -->
-          <button class="compose" href="{% url 'logout' %}">Cerrar Sesión</button>
+          <a class="compose" href="{% url 'logout' %}">Cerrar Sesión</a>
       </div>
       
       <div class="right-body">
         <div class="scroll-cards">
-
+            
+            
             <div class="container">
                 <h1>Lista de Pacientes</h1>
+                <form id="search-form">
+                    <input type="text" id="search-input" name="search" placeholder="Buscar paciente por nombre">
+                </form>
+                <script>
+                    document.getElementById('search-input').addEventListener('input', function() {
+                         let searchQuery = this.value;
+                         
+                         // Enviar solicitud AJAX para buscar pacientes
+                         fetch(`{% url 'dashboard' %}?search=${searchQuery}`, {
+                             method: 'GET',
+                             headers: {
+                                 'X-Requested-With': 'XMLHttpRequest'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                let pacientesContainer = document.getElementById('pacientes-container');
+                                pacientesContainer.innerHTML = '';
+                                
+                                if (data.pacientes.length > 0) {
+                                    data.pacientes.forEach(paciente => {
+                                        pacientesContainer.innerHTML += `
+                                        <div class="scroll-cards">
+                                            <div class="card" onclick="toggleDetails(${paciente.id})">
+                                                <div class="mails">
+                                                    <img src="${paciente.foto || '{% static "logo2.png" %}'}" alt="Foto de ${paciente.nombre_completo}">
+                                                    <h2 class="mail-names">${paciente.nombre_completo}</h2>
+                                                    <br>
+                                                    </div>
+                                                    <div class="mail-info">
+                                                        <p class="mail-info">Edad: ${paciente.edad} años</p>
+                                                        </div>
+                                                        </div>
+                                                        </div>`;
+                                                    });
+                                                } else {
+                                                    pacientesContainer.innerHTML = '<p>No existen pacientes.</p>';
+                                                }
+                                            })
+                                            .catch(error => console.error('Error al buscar pacientes:', error));
+                                        });
+                                        </script>
                 <div class="mail-info">
-                    {% for paciente in pacientes %}
-                        <div class="scroll-cards" >
-                            <div class="card" onclick="toggleDetails( {{ paciente.id }} )">
-                                <div class="mails">
-                                    {% if paciente.foto %}
-                                        <img src="{{ paciente.foto.url }}" alt="Foto de {{ paciente.nombre_completo }}">
-                                    {% else %}
-                                        <img src="{% static 'logo2.png' %}" alt="Foto de perfil">
-                                    {% endif %}
-                                    <h2 class="mail-names">{{ paciente.nombre_completo }}</h2>
-                                    <br>
+                    {% if pacientes %}
+                        {% for paciente in pacientes %}
+                            <div class="scroll-cards">
+                                <div class="card" onclick="toggleDetails( {{ paciente.id }} )">
+                                    <div class="mails">
+                                        {% if paciente.foto %}
+                                            <img src="{{ paciente.foto.url }}" alt="Foto de {{ paciente.nombre_completo }}">
+                                        {% else %}
+                                            <img src="{% static 'logo2.png' %}" alt="Foto de perfil">
+                                        {% endif %}
+                                        <h2 class="mail-names">{{ paciente.nombre_completo }}</h2>
+                                        <br>
+                                    </div>
+                                    <div class="mail-info">
+                                        <p class="mail-info">Edad: {{ paciente.edad }} años</p>
+                                    </div>
                                 </div>
-                                <div class="mail-info">
-                                    <p class="mail-info">Edad: {{ paciente.edad }} años</p>
                             </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-
-                </div>            
+                        {% endfor %}
+                    {% else %}
+                        <p>No existen pacientes.</p>
+                    {% endif %}
+                </div>
             </div>
+            
         </div>    
         {% for paciente in pacientes %}
         <div class="message details-container" id="details-{{ paciente.id }}" style="display: none;">
@@ -76,72 +116,150 @@
             {% endif %}
             <h2 class="mail-names">{{ paciente.nombre_completo }}</h2>
             <p class="mail-info">Edad: {{ paciente.edad }} años</p>
-            <p>Género: {{ paciente.genero }}</p>
-            <p>Correo: {{ paciente.correo }}</p>
-            <p>Teléfono: {{ paciente.telefono }}</p>
-            <p>Dirección: {{ paciente.direccion }}</p>
-            <p>Fecha de Registro: {{ paciente.fecha_registro }}</p>
-            <p>Fecha de Nacimiento: {{ paciente.fecha_nacimiento }}</p>
-            <p>Lugar de Nacimiento: {{ paciente.lugar_nacimiento }}</p>
-            <p>Escolaridad: {{ paciente.escolaridad }}</p>
-            <p>Estado Civil: {{ paciente.estado_civil }}</p>
-            <p>Religión: {{ paciente.religion }}</p>
-            <p>Acude Voluntariamente: {{ paciente.acude_voluntariamente }}</p>
+
+            <div class="tabs">
+                <ul class="tab-links">
+                    <li class="active"><a href="#tab1">Información Básica</a></li>
+                    <li><a href="#tab2">Información de los Padres</a></li>
+                    <li><a href="#tab3">Información de los Hermanos</a></li>
+                    <li><a href="#tab4">Otras Personas en el Hogar</a></li>
+                    <li><a href="#tab5">Antecedentes Médicos</a></li>
+                    <li><a href="#tab6">Análisis de Citas</a></li>
+                </ul>
             
-            <!-- Información de los padres -->
-            <h3>Información del Padre</h3>
-            <p>Nombre: {{ paciente.nombre_padre }}</p>
-            <p>Edad: {{ paciente.edad_padre }}</p>
-            <p>Escolaridad: {{ paciente.escolaridad_padre }}</p>
-            <p>Ocupación: {{ paciente.ocupacion_padre }}</p>
-            <p>Antecedentes Patológicos: {{ paciente.antecedentes_patologicos_padre }}</p>
+                <div class="tab-content">
+                    <div id="tab1" class="tab active">
+                        <!-- Información Básica -->
+                        <p>Género: {{ paciente.genero }}</p>
+                        <p>Correo: {{ paciente.correo }}</p>
+                        <p>Teléfono: {{ paciente.telefono }}</p>
+                        <p>Dirección: {{ paciente.direccion }}</p>
+                        <p>Fecha de Registro: {{ paciente.fecha_registro }}</p>
+                        <p>Fecha de Nacimiento: {{ paciente.fecha_nacimiento }}</p>
+                        <p>Lugar de Nacimiento: {{ paciente.lugar_nacimiento }}</p>
+                        <p>Escolaridad: {{ paciente.escolaridad }}</p>
+                        <p>Estado Civil: {{ paciente.estado_civil }}</p>
+                        <p>Religión: {{ paciente.religion }}</p>
+                        <p>Acude Voluntariamente: {{ paciente.acude_voluntariamente|yesno:"Sí,No" }}</p>
+                    </div>
+            
+                    <div id="tab2" class="tab">
+                        <!-- Información de los Padres -->
+                        {% for padre in paciente.padres.all %}
+                            <h3>Información del Padre</h3>
+                            <p>Nombre: {{ padre.nombre_padre }}</p>
+                            <p>Edad: {{ padre.edad_padre }}</p>
+                            <p>Escolaridad: {{ padre.escolaridad_padre }}</p>
+                            <p>Ocupación: {{ padre.ocupacion_padre }}</p>
+                            <p>Antecedentes Patológicos: {{ padre.antecedentes_patologicos_padre }}</p>
+            
+                            <h3>Información de la Madre</h3>
+                            <p>Nombre: {{ padre.nombre_madre }}</p>
+                            <p>Edad: {{ padre.edad_madre }}</p>
+                            <p>Escolaridad: {{ padre.escolaridad_madre }}</p>
+                            <p>Ocupación: {{ padre.ocupacion_madre }}</p>
+                            <p>Antecedentes Patológicos: {{ padre.antecedentes_patologicos_madre }}</p>
+            
+                            <p>Estado Civil de los Padres: {{ padre.estado_civil_padres }}</p>
+                        {% endfor %}
+                    </div>
+            
+                    <div id="tab3" class="tab">
+                        <!-- Información de los Hermanos -->
+                        {% for hermano in paciente.hermanos.all %}
+                            <p>Nombre Hermano: {{ hermano.nombre }}</p>
+                            <p>Edad: {{ hermano.edad }}</p>
+                            <p>Grado Escolar: {{ hermano.grado_escolar }}</p>
+                            <p>Antecedentes Patológicos: {{ hermano.antecedentes_patologicos }}</p>
+                            <p>Adicciones: {{ hermano.adicciones }}</p>
+                        {% endfor %}
+                    </div>
+            
+                    <div id="tab4" class="tab">
+                        <!-- Otras Personas en el Hogar -->
+                        {% for hogar in paciente.hogar.all %}
+                            <p>{{ hogar.otras_personas }}</p>
+                        {% endfor %}
+                    </div>
+            
+                    <div id="tab5" class="tab">
+                        <!-- Antecedentes Médicos -->
+                        {% for salud in paciente.salud.all %}
+                            <p>Asma/Alergias: {{ salud.asma_alergias }}</p>
+                            <p>Catarros Frecuentes: {{ salud.catarros_frecuentes }}</p>
+                            <p>Epilepsia/Convulsiones: {{ salud.epilepsia_convulsiones }}</p>
+                            <p>Convulsiones Febriles: {{ salud.convulsiones_febriles }}</p>
+                            <p>Manías: {{ salud.manias }}</p>
+                            <p>Lesiones en la Cabeza: {{ salud.lesiones_cabeza }}</p>
+                            <p>Cirugías/Hospitalización: {{ salud.cirugias_hospitalizacion }}</p>
+                            <p>Problemas de Visión: {{ salud.problemas_vision }}</p>
+                            <p>Problemas de Apetito: {{ salud.problemas_apetito }}</p>
+                        {% endfor %}
+                    </div>
+                    
+                    <div id="tab6" class="tab">
+                        <h3>Notas Transcritas</h3>
+                        {% for cita in paciente.citas.all %}
+                            <div class="cita-item">
+                                <p>{{ cita.texto }}</p>
+                                <p><strong>Fecha:</strong> {{ cita.fecha }}</p>
+                            </div>
+                        {% endfor %}
+                    
+                        <!-- Textarea para agregar notas transcritas manualmente -->
+                        <h3>Agregar Nueva Nota</h3>
+                        <form method="POST" action="{% url 'agregar_nota' paciente.id %}">
+                            {% csrf_token %}
+                            <textarea name="nueva_nota" rows="4" cols="50" placeholder="Escribe una nueva nota..."></textarea>
+                            <button type="submit" class="btn-pacientes">Guardar Nota</button>
+                        </form>
+                    
+                        <!-- Mostrar la nube de palabras generada -->
+                        <h3>Tendencias en las Notas</h3>
+                        <img src="{% static 'wordclouds/nube_de_palabras.png' %}" alt="Nube de Palabras">
+                    
+                        <!-- Botón para generar la nube de palabras -->
+                        <a class="btn-pacientes" href="{% url 'generar_nube' paciente.id %}">Generar Nube de Palabras</a>
+                    </div>
+                    
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+    const tabLinks = document.querySelectorAll(".tab-links a");
+    const tabs = document.querySelectorAll(".tab");
 
-            <h3>Información de la Madre</h3>
-            <p>Nombre: {{ paciente.nombre_madre }}</p>
-            <p>Edad: {{ paciente.edad_madre }}</p>
-            <p>Escolaridad: {{ paciente.escolaridad_madre }}</p>
-            <p>Ocupación: {{ paciente.ocupacion_madre }}</p>
-            <p>Antecedentes Patológicos: {{ paciente.antecedentes_patologicos_madre }}</p>
+    tabLinks.forEach(function (link) {
+        link.addEventListener("click", function (e) {
+            e.preventDefault();
+            
+            // Quitar clase "active" de todas las pestañas y enlaces
+            tabLinks.forEach(function (item) {
+                item.parentElement.classList.remove("active");
+            });
 
-            <p>Estado Civil de los Padres: {{ paciente.estado_civil_padres }}</p>
+            tabs.forEach(function (tab) {
+                tab.classList.remove("active");
+            });
 
-            <!-- Información de los hermanos -->
-            <h3>Información de Hermanos</h3>
-            <p>Nombre Hermano 1: {{ paciente.nombre_hermano_1 }}</p>
-            <p>Edad Hermano 1: {{ paciente.edad_hermano_1 }}</p>
-            <p>Grado Escolar Hermano 1: {{ paciente.grado_escolar_hermano_1 }}</p>
-            <p>Antecedentes Patológicos Hermano 1: {{ paciente.antecedentes_patologicos_hermano_1 }}</p>
-            <p>Adicciones Hermano 1: {{ paciente.adicciones_hermano_1 }}</p>
+            // Añadir clase "active" a la pestaña y enlace actual
+            const currentTab = document.querySelector(this.getAttribute("href"));
+            currentTab.classList.add("active");
+            this.parentElement.classList.add("active");
+        });
+    });
+});
 
-            <p>Nombre Hermano 2: {{ paciente.nombre_hermano_2 }}</p>
-            <p>Edad Hermano 2: {{ paciente.edad_hermano_2 }}</p>
-            <p>Grado Escolar Hermano 2: {{ paciente.grado_escolar_hermano_2 }}</p>
-            <p>Antecedentes Patológicos Hermano 2: {{ paciente.antecedentes_patologicos_hermano_2 }}</p>
-            <p>Adicciones Hermano 2: {{ paciente.adicciones_hermano_2 }}</p>
-
-            <p>Nombre Hermano 3: {{ paciente.nombre_hermano_3 }}</p>
-            <p>Edad Hermano 3: {{ paciente.edad_hermano_3 }}</p>
-            <p>Grado Escolar Hermano 3: {{ paciente.grado_escolar_hermano_3 }}</p>
-            <p>Antecedentes Patológicos Hermano 3: {{ paciente.antecedentes_patologicos_hermano_3 }}</p>
-            <p>Adicciones Hermano 3: {{ paciente.adicciones_hermano_3 }}</p>
-
-            <!-- Otras personas en el hogar -->
-            <h3>Otras Personas en el Hogar</h3>
-            <p>{{ paciente.otras_personas_hogar }}</p>
-
-            <!-- Preguntas de salud -->
-            <h3>Antecedentes Médicos</h3>
-            <p>Asma/Alergias: {{ paciente.asma_alergias }}</p>
-            <p>Catarros Frecuentes: {{ paciente.catarros_frecuentes }}</p>
-            <p>Epilepsia/Convulsiones: {{ paciente.epilepsia_convulsiones }}</p>
-            <p>Convulsiones Febriles: {{ paciente.convulsiones_febriles }}</p>
-            <p>Manías: {{ paciente.manias }}</p>
-            <p>Lesiones en la Cabeza: {{ paciente.lesiones_cabeza }}</p>
-            <p>Cirugías/Hospitalización: {{ paciente.cirugias_hospitalizacion }}</p>
-            <p>Problemas de Visión: {{ paciente.problemas_vision }}</p>
-            <p>Problemas de Apetito: {{ paciente.problemas_apetito }}</p>
+                    </script>
+                </div>
+            </div>
+    
+            <!-- Botón de agregar cita -->
+            <a class="btn-pacientes" href="{% url 'agregar_cita' paciente.id %}">Agregar Cita</a>
+    
+            <!-- Botón de escanear imágenes -->
+            <a class="btn-pacientes" href="{% url 'procesar_manuscrito' paciente.id %}">Escanear Imágenes</a>
         </div>
-        {% endfor %}
+    {% endfor %}
+    
           
           <div id="citas-section" class="profile">
               <h2 class="names">Citas</h2>

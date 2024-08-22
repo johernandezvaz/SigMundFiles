@@ -62,14 +62,26 @@ class Paciente(models.Model):
     religion = models.CharField(max_length=50, blank=True, null=True)
     acude_voluntariamente = models.BooleanField(default=True)
 
-    # Información de los padres
+    def save(self, *args, **kwargs):
+        if self.fecha_nacimiento:
+            today = date.today()
+            self.edad = today.year - self.fecha_nacimiento.year - ((today.month, today.day) < (self.fecha_nacimiento.month, self.fecha_nacimiento.day))
+        super(Paciente, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.nombre_completo or "Paciente Desconocido"
+
+class Padres(models.Model):
+    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='padres')
     nombre_padre = models.CharField(max_length=255, blank=True, null=True)
+    fecha_nacimiento_padre = models.DateField(blank=True, null=True)
     edad_padre = models.IntegerField(blank=True, null=True, default=0)
     escolaridad_padre = models.CharField(max_length=255, blank=True, null=True)
     ocupacion_padre = models.CharField(max_length=255, blank=True, null=True)
     antecedentes_patologicos_padre = models.TextField(blank=True, null=True)
 
     nombre_madre = models.CharField(max_length=255, blank=True, null=True)
+    fecha_nacimiento_madre = models.DateField(blank=True, null=True)
     edad_madre = models.IntegerField(blank=True, null=True, default=0)
     escolaridad_madre = models.CharField(max_length=255, blank=True, null=True)
     ocupacion_madre = models.CharField(max_length=255, blank=True, null=True)
@@ -77,32 +89,33 @@ class Paciente(models.Model):
 
     estado_civil_padres = models.CharField(max_length=50, blank=True, null=True, default='soltero', choices=[('soltero', 'Soltero'), ('casado', 'Casado'), ('divorciado', 'Divorciado'), ('viudo', 'Viudo')])
 
-    # Información de los hermanos (hasta 3, no obligatorios)
-    nombre_hermano_1 = models.CharField(max_length=255, blank=True, null=True)
-    antecedentes_hermano_1 = models.TextField(blank=True, null=True)
-    edad_hermano_1 = models.IntegerField(blank=True, null=True, default=0)
-    grado_escolar_hermano_1 = models.CharField(max_length=255, blank=True, null=True)
-    antecedentes_patologicos_hermano_1 = models.TextField(blank=True, null=True)
-    adicciones_hermano_1 = models.TextField(blank=True, null=True)
+    def save(self, *args, **kwargs):
+        today = date.today()
+        if self.fecha_nacimiento_padre:
+            self.edad_padre = today.year - self.fecha_nacimiento_padre.year - ((today.month, today.day) < (self.fecha_nacimiento_padre.month, self.fecha_nacimiento_padre.day))
+        if self.fecha_nacimiento_madre:
+            self.edad_madre = today.year - self.fecha_nacimiento_madre.year - ((today.month, today.day) < (self.fecha_nacimiento_madre.month, self.fecha_nacimiento_madre.day))
+        super(Padres, self).save(*args, **kwargs)
 
-    nombre_hermano_2 = models.CharField(max_length=255, blank=True, null=True)
-    antecedentes_hermano_2 = models.TextField(blank=True, null=True)
-    edad_hermano_2 = models.IntegerField(blank=True, null=True, default=0)
-    grado_escolar_hermano_2 = models.CharField(max_length=255, blank=True, null=True)
-    antecedentes_patologicos_hermano_2 = models.TextField(blank=True, null=True)
-    adicciones_hermano_2 = models.TextField(blank=True, null=True)
 
-    nombre_hermano_3 = models.CharField(max_length=255, blank=True, null=True)
-    antecedentes_hermano_3 = models.TextField(blank=True, null=True)
-    edad_hermano_3 = models.IntegerField(blank=True, null=True, default=0)
-    grado_escolar_hermano_3 = models.CharField(max_length=255, blank=True, null=True)
-    antecedentes_patologicos_hermano_3 = models.TextField(blank=True, null=True)
-    adicciones_hermano_3 = models.TextField(blank=True, null=True)
+class Hermano(models.Model):
+    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='hermanos')
+    nombre = models.CharField(max_length=255, blank=True, null=True)
+    fecha_nacimiento = models.DateField(blank=True, null=True)
+    edad = models.IntegerField(blank=True, null=True, default=0)
+    antecedentes = models.TextField(blank=True, null=True)
+    grado_escolar = models.CharField(max_length=255, blank=True, null=True)
+    antecedentes_patologicos = models.TextField(blank=True, null=True)
+    adicciones = models.TextField(blank=True, null=True)
 
-    # Otras personas que viven en el hogar
-    otras_personas_hogar = models.TextField(blank=True, null=True)
+    def save(self, *args, **kwargs):
+        today = date.today()
+        if self.fecha_nacimiento:
+            self.edad = today.year - self.fecha_nacimiento.year - ((today.month, today.day) < (self.fecha_nacimiento.month, self.fecha_nacimiento.day))
+        super(Hermano, self).save(*args, **kwargs)
 
-    # Preguntas de salud con opciones (Nunca, Pasado, Presente)
+class Salud(models.Model):
+    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='salud')
     asma_alergias = models.CharField(max_length=10, choices=[('nunca', 'Nunca'), ('pasado', 'Pasado'), ('presente', 'Presente')], blank=True, null=True, default='nunca')
     catarros_frecuentes = models.CharField(max_length=10, choices=[('nunca', 'Nunca'), ('pasado', 'Pasado'), ('presente', 'Presente')], blank=True, null=True, default='nunca')
     epilepsia_convulsiones = models.CharField(max_length=10, choices=[('nunca', 'Nunca'), ('pasado', 'Pasado'), ('presente', 'Presente')], blank=True, null=True, default='nunca')
@@ -113,14 +126,10 @@ class Paciente(models.Model):
     problemas_vision = models.CharField(max_length=10, choices=[('nunca', 'Nunca'), ('pasado', 'Pasado'), ('presente', 'Presente')], blank=True, null=True, default='nunca')
     problemas_apetito = models.CharField(max_length=10, choices=[('nunca', 'Nunca'), ('pasado', 'Pasado'), ('presente', 'Presente')], blank=True, null=True, default='nunca')
 
-    def save(self, *args, **kwargs):
-        if self.fecha_nacimiento:
-            today = date.today()
-            self.edad = today.year - self.fecha_nacimiento.year - ((today.month, today.day) < (self.fecha_nacimiento.month, self.fecha_nacimiento.day))
-        super(Paciente, self).save(*args, **kwargs)
+class Hogar(models.Model):
+    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='hogar')
+    otras_personas = models.TextField(blank=True, null=True)
 
-    def __str__(self):
-        return self.nombre_completo or "Paciente Desconocido"
 
 
 class Cita(models.Model):

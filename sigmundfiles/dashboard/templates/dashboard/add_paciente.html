@@ -5,8 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agregar Paciente</title>
-    <!-- <link rel="stylesheet" type="text/css" href="{% static 'css/patients.css' %}"> -->
-    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dash1.css' %}">
     <script src="{% static 'js/patients.js' %}"></script>
     <link href="{% static 'favicon.png' %}" rel="shortcut icon" type="image/x-icon"/>
     <link href="{% static 'favicon.png' %}" rel="apple-touch-icon"/> 
@@ -26,114 +25,172 @@
             <div class="folder-icons">
                 <a class="icon-name" href="{% url 'agregar_paciente' %}">Agregar Paciente</a>
             </div>
-            <div class="folder-icons">
-                <a class="icon-name" href="{% url 'agregar_cita' %}">Agregar Cita</a>
-            </div>
-            <div class="folder-icons">
-                <a class="icon-name" href="{% url 'procesar_manuscrito' %}">Escanear Imágenes</a>
-            </div>
         </div>
     </div>
   </div>
   <div class="right-side wrapper">
     <div class="top-bar-justify">
         <h1 class="big-inbox">Agregar Paciente</h1>
-
     </div>
     <div class="right-body2">
         <div class="scroll-cards2">
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-    
-            <div class="form-section">
-                <h3>Información General</h3>
-                {{ form.foto.label_tag }} {{ form.foto }}
-                {{ form.nombre_completo.label_tag }} {{ form.nombre_completo }}
-                {{ form.genero.label_tag }} {{ form.genero }}
-                {{ form.fecha_nacimiento.label_tag }} {{ form.fecha_nacimiento }}
-                {{ form.edad.label_tag }} {{ form.edad }}
-                {{ form.lugar_nacimiento.label_tag }} {{ form.lugar_nacimiento }}
-                {{ form.escolaridad.label_tag }} {{ form.escolaridad }}
-                {{ form.estado_civil.label_tag }} {{ form.estado_civil }}
-                {{ form.correo.label_tag }} {{ form.correo }}
-                {{ form.telefono.label_tag }} {{ form.telefono }}
-                {{ form.direccion.label_tag }} {{ form.direccion }}
-                {{ form.religion.label_tag }} {{ form.religion }}
-                {{ form.acude_voluntariamente.label_tag }} {{ form.acude_voluntariamente }}
-            </div>
-            <div class="form-section">
-                <h3>Información de los Padres</h3>
-                {{ form.nombre_padre.label_tag }} {{ form.nombre_padre }}
-                {{ form.edad_padre.label_tag }} {{ form.edad_padre }}
-                {{ form.escolaridad_padre.label_tag }} {{ form.escolaridad_padre }}
-                {{ form.ocupacion_padre.label_tag }} {{ form.ocupacion_padre }}
-                {{ form.antecedentes_patologicos_padre.label_tag }} {{ form.antecedentes_patologicos_padre }}
-                {{ form.nombre_madre.label_tag }} {{ form.nombre_madre }}
-                {{ form.edad_madre.label_tag }} {{ form.edad_madre }}
-                {{ form.escolaridad_madre.label_tag }} {{ form.escolaridad_madre }}
-                {{ form.ocupacion_madre.label_tag }} {{ form.ocupacion_madre }}
-                {{ form.antecedentes_patologicos_madre.label_tag }} {{ form.antecedentes_patologicos_madre }}
-                {{ form.estado_civil_padres.label_tag }} {{ form.estado_civil_padres }}
-            </div>
-        
-            <div class="form-section">
-                <h3>Información de los Hermanos</h3>
-                <button type="button" class="show-section-button" onclick="toggleSection('hermano1')">Agregar Hermano 1</button>
-                <div id="hermano1" class="hidden-section">
-                    {{ form.nombre_hermano_1.label_tag }} {{ form.nombre_hermano_1 }}
-                    {{ form.antecedentes_hermano_1.label_tag }} {{ form.antecedentes_hermano_1 }}
-                    {{ form.edad_hermano_1.label_tag }} {{ form.edad_hermano_1 }}
-                    {{ form.grado_escolar_hermano_1.label_tag }} {{ form.grado_escolar_hermano_1 }}
-                    {{ form.antecedentes_patologicos_hermano_1.label_tag }} {{ form.antecedentes_patologicos_hermano_1 }}
-                    {{ form.adicciones_hermano_1.label_tag }} {{ form.adicciones_hermano_1 }}
+                
+                <div class="form-section">
+                    <h3>Información General</h3>
+                    {{ paciente_form.foto.label_tag }} {{ paciente_form.foto }}
+                    {{ paciente_form.nombre_completo.label_tag }} {{ paciente_form.nombre_completo }}
+                    {{ paciente_form.fecha_nacimiento.label_tag }} {{ paciente_form.fecha_nacimiento }}
+                    {{ paciente_form.edad.label_tag }} {{ paciente_form.edad }}
+                    {{ paciente_form.genero.label_tag }} {{ paciente_form.genero }}
+                    {{ paciente_form.lugar_nacimiento.label_tag }} {{ paciente_form.lugar_nacimiento }}
+                    {{ paciente_form.escolaridad.label_tag }} {{ paciente_form.escolaridad }}
+                    {{ paciente_form.estado_civil.label_tag }} {{ paciente_form.estado_civil }}
+                    {{ paciente_form.correo.label_tag }} {{ paciente_form.correo }}
+                    {{ paciente_form.telefono.label_tag }} {{ paciente_form.telefono }}
+                    {{ paciente_form.direccion.label_tag }} {{ paciente_form.direccion }}
+                    {{ paciente_form.religion.label_tag }} {{ paciente_form.religion }}
+                    {{ paciente_form.acude_voluntariamente.label_tag }} {{ paciente_form.acude_voluntariamente }}
                 </div>
-                <button type="button" class="show-section-button" onclick="toggleSection('hermano2')">Agregar Hermano 2</button>
-                <div id="hermano2" class="hidden-section">
-                    {{ form.nombre_hermano_2.label_tag }} {{ form.nombre_hermano_2 }}
-                    {{ form.antecedentes_hermano_2.label_tag }} {{ form.antecedentes_hermano_2 }}
-                    {{ form.edad_hermano_2.label_tag }} {{ form.edad_hermano_2 }}
-                    {{ form.grado_escolar_hermano_2.label_tag }} {{ form.grado_escolar_hermano_2 }}
-                    {{ form.antecedentes_patologicos_hermano_2.label_tag }} {{ form.antecedentes_patologicos_hermano_2 }}
-                    {{ form.adicciones_hermano_2.label_tag }} {{ form.adicciones_hermano_2 }}
-                </div>
-                <button type="button" class="show-section-button" onclick="toggleSection('hermano3')">Agregar Hermano 3</button>
-                <div id="hermano3" class="hidden-section">
-                    {{ form.nombre_hermano_3.label_tag }} {{ form.nombre_hermano_3 }}
-                    {{ form.antecedentes_hermano_3.label_tag }} {{ form.antecedentes_hermano_3 }}
-                    {{ form.edad_hermano_3.label_tag }} {{ form.edad_hermano_3 }}
-                    {{ form.grado_escolar_hermano_3.label_tag }} {{ form.grado_escolar_hermano_3 }}
-                    {{ form.antecedentes_patologicos_hermano_3.label_tag }} {{ form.antecedentes_patologicos_hermano_3 }}
-                    {{ form.adicciones_hermano_3.label_tag }} {{ form.adicciones_hermano_3 }}
-                </div>
-            </div>
-        
-            <div class="form-section">
-                <h3>Otras Personas en el Hogar</h3>
-                {{ form.otras_personas_hogar.label_tag }} {{ form.otras_personas_hogar }}
-            </div>
-        
-            <div class="form-section">
-                <h3>Historial Médico</h3>
-                {{ form.asma_alergias.label_tag }} {{ form.asma_alergias }}
-                {{ form.catarros_frecuentes.label_tag }} {{ form.catarros_frecuentes }}
-                {{ form.epilepsia_convulsiones.label_tag }} {{ form.epilepsia_convulsiones }}
-                {{ form.convulsiones_febriles.label_tag }} {{ form.convulsiones_febriles }}
-                {{ form.manias.label_tag }} {{ form.manias }}
-                {{ form.lesiones_cabeza.label_tag }} {{ form.lesiones_cabeza }}
-                {{ form.cirugias_hospitalizacion.label_tag }} {{ form.cirugias_hospitalizacion }}
-                {{ form.problemas_vision.label_tag }} {{ form.problemas_vision }}
-                {{ form.problemas_apetito.label_tag }} {{ form.problemas_apetito }}
-            </div>
-        <button class="compose2" type="submit">Guardar Paciente</button>
+                
+                <div class="form-section">
+                    <h3>Información de la Familia</h3>
 
+                    <!-- Botón para agregar padre -->
+                    <button class="btn-familia" type="button" id="add-padre">Agregar Padre</button>
+                    <div id="padre-section" style="display:none;">
+                        <h4>Padre</h4>
+                        {{ padres_form.nombre_padre.label_tag }} {{ padres_form.nombre_padre }}
+                        {{ padres_form.fecha_nacimiento_padre.label_tag }} {{ padres_form.fecha_nacimiento_padre }}
+                        {{ padres_form.edad_padre.label_tag }} {{ padres_form.edad_padre }}
+                        {{ padres_form.escolaridad_padre.label_tag }} {{ padres_form.escolaridad_padre }}
+                        {{ padres_form.ocupacion_padre.label_tag }} {{ padres_form.ocupacion_padre }}
+                        {{ padres_form.antecedentes_patologicos_padre.label_tag }} {{ padres_form.antecedentes_patologicos_padre }}
+                        <button class="btn-familia" type="button" id="save-close-padre">Guardar y Cerrar</button>
+                        <button class="btn-familia" type="button" id="remove-padre">Eliminar Padre</button>
+                    </div>
+
+                    <!-- Botón para agregar madre -->
+                    <button class="btn-familia" type="button" id="add-madre">Agregar Madre</button>
+                    <div id="madre-section" style="display:none;">
+                        <h4>Madre</h4>
+                        {{ padres_form.nombre_madre.label_tag }} {{ padres_form.nombre_madre }}
+                        {{ padres_form.fecha_nacimiento_madre.label_tag }} {{ padres_form.fecha_nacimiento_madre }}
+                        {{ padres_form.edad_madre.label_tag }} {{ padres_form.edad_madre }}
+                        {{ padres_form.escolaridad_madre.label_tag }} {{ padres_form.escolaridad_madre }}
+                        {{ padres_form.ocupacion_madre.label_tag }} {{ padres_form.ocupacion_madre }}
+                        {{ padres_form.antecedentes_patologicos_madre.label_tag }} {{ padres_form.antecedentes_patologicos_madre }}
+                        <button class="btn-familia" type="button" id="save-close-madre">Guardar y Cerrar</button>
+                        <button class="btn-familia" type="button" id="remove-madre">Eliminar Madre</button>
+                    </div>
+
+                    <!-- Botón para agregar hermanos -->
+                    <button class="btn-familia" type="button" id="add-hermano">Agregar Hermano</button>
+                    <div id="hermanos-section">
+                        {{ hermano_formset.management_form }}
+                        <div class="hermano-form" style="display:none;">
+                            {{ hermano_formset.empty_form.nombre.label_tag }} {{ hermano_formset.empty_form.nombre }}
+                            {{ hermano_formset.empty_form.fecha_nacimiento.label_tag }} {{ hermano_formset.empty_form.fecha_nacimiento }}
+                            {{ hermano_formset.empty_form.edad.label_tag }} {{ hermano_formset.empty_form.edad }}
+                            {{ hermano_formset.empty_form.grado_escolar.label_tag }} {{ hermano_formset.empty_form.grado_escolar }}
+                            {{ hermano_formset.empty_form.antecedentes.label_tag }} {{ hermano_formset.empty_form.antecedentes }}
+                            {{ hermano_formset.empty_form.antecedentes_patologicos.label_tag }} {{ hermano_formset.empty_form.antecedentes_patologicos }}
+                            {{ hermano_formset.empty_form.adicciones.label_tag }} {{ hermano_formset.empty_form.adicciones }}
+                            <button class="btn-familia" type="button" class="save-close-hermano">Guardar y Cerrar</button>
+                            <button class="btn-familia" type="button" class="remove-hermano">Eliminar Hermano</button>
+                        </div>
+                    </div>
+
+                    <!-- Aquí se mostrará la lista de familiares agregados -->
+                    <div id="familiares-list">
+                        <h4>Familiares Agregados:</h4>
+                        <ul id="familiares-items">
+                            <!-- Items agregados se mostrarán aquí -->
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Otras Personas en el Hogar</h3>
+                    {{ hogar_form.otras_personas.label_tag }} {{ hogar_form.otras_personas }}
+                </div>
+
+                <div class="form-section">
+                    <h3>Historial Médico</h3>
+                    <div class="selectdiv">
+                        {{ salud_formset.management_form }}
+                        {% for form in salud_formset %}
+                            {{ form.asma_alergias.label_tag }} {{ form.asma_alergias }}
+                            {{ form.catarros_frecuentes.label_tag }} {{ form.catarros_frecuentes }}
+                            {{ form.epilepsia_convulsiones.label_tag }} {{ form.epilepsia_convulsiones }}
+                            {{ form.convulsiones_febriles.label_tag }} {{ form.convulsiones_febriles }}
+                            {{ form.manias.label_tag }} {{ form.manias }}
+                            {{ form.lesiones_cabeza.label_tag }} {{ form.lesiones_cabeza }}
+                            {{ form.cirugias_hospitalizacion.label_tag }} {{ form.cirugias_hospitalizacion }}
+                            {{ form.problemas_vision.label_tag }} {{ form.problemas_vision }}
+                            {{ form.problemas_apetito.label_tag }} {{ form.problemas_apetito }}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <button class="compose2" type="submit">Guardar Paciente</button>
+            </form>
         </div>    
     </div>
-    </div>
-
-
-
-    </form>
+  </div>
 {% endblock %}
+<script>
+   // Función para agregar familiar a la lista de familiares agregados
+   function agregarFamiliar(tipo, nombre) {
+        let familiaresList = document.getElementById('familiares-items');
+        let li = document.createElement('li');
+        li.textContent = tipo + ': ' + nombre;
+        familiaresList.appendChild(li);
+    }
 
+    // Agregar y eliminar sección de Padre
+    document.getElementById('add-padre').onclick = function() {
+        document.getElementById('padre-section').style.display = 'block';
+        this.style.display = 'none';
+    };
+    document.getElementById('save-close-padre').onclick = function() {
+        agregarFamiliar('Padre', document.getElementById('padre-section').querySelector('input').value);
+        document.getElementById('padre-section').style.display = 'none';
+    };
+
+    // Agregar y eliminar sección de Madre
+    document.getElementById('add-madre').onclick = function() {
+        document.getElementById('madre-section').style.display = 'block';
+        this.style.display = 'none';
+    };
+    document.getElementById('save-close-madre').onclick = function() {
+        agregarFamiliar('Madre', document.getElementById('madre-section').querySelector('input').value);
+        document.getElementById('madre-section').style.display = 'none';
+    };
+
+    // Agregar y eliminar secciones de Hermanos
+    document.getElementById('add-hermano').onclick = function() {
+        let hermanosSection = document.getElementById('hermanos-section');
+        let newForm = hermanosSection.querySelector('.hermano-form').cloneNode(true);
+        newForm.style.display = 'block';
+
+        // Resetear los valores de los inputs
+        newForm.querySelectorAll('input, select').forEach(input => input.value = '');
+
+        hermanosSection.appendChild(newForm);
+
+        // Guardar y cerrar formulario de hermano
+        newForm.querySelector('.save-close-hermano').onclick = function() {
+            agregarFamiliar('Hermano', newForm.querySelector('input').value);
+            newForm.remove();
+        };
+
+        // Eliminar formulario de hermano
+        newForm.querySelector('.remove-hermano').onclick = function() {
+            newForm.remove();
+        };
+    };  
+</script>
 </body>
 </html>
