@@ -1,10 +1,14 @@
-{% load static %}
 <!DOCTYPE html>
+{% load static %}
 <html>
 <head>
     <title>Dashboard</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/dash1.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dashboard.css' %}">
     <script src="{% static 'js/index.js' %}"></script>
+    <script src="{% static 'js/popups.js' %}"></script>
+    <script src="{% static 'js/analisis.js' %}"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.1/dist/tesseract.min.js"></script>
     <link href="{% static 'favicon.png' %}" rel="shortcut icon" type="image/x-icon"/>
     <link href="{% static 'favicon.png' %}" rel="apple-touch-icon"/> 
    
@@ -198,65 +202,100 @@
                     </div>
 
                     <div id="tab6" class="tab">
-                        <h3>Notas Transcritas</h3>
-                        {% for cita in paciente.citas.all %}
-                            <div class="cita-item">
-                                <p>{{ cita.texto }}</p>
-                                <p><strong>Fecha:</strong> {{ cita.fecha }}</p>
-                            </div>
-                        {% endfor %}
-                    
-                        <!-- Textarea para agregar notas transcritas manualmente -->
-                        <h3>Agregar Nueva Nota</h3>
-                        <form method="POST" action="{% url 'agregar_nota_view' paciente.id %}">
-                            {% csrf_token %}
-                            <textarea name="nueva_nota" rows="4" cols="50" placeholder="Escribe una nueva nota..."></textarea>
-                            <button type="submit" class="btn-pacientes">Guardar Nota</button>
-                        </form>
-                    
-                        <!-- Mostrar la nube de palabras generada -->
-                        <h3>Tendencias en las Notas</h3>
-                        <img src="{% static 'wordclouds/nube_de_palabras.png' %}" alt="Nube de Palabras">
-                    
-                        <!-- Botón para generar la nube de palabras -->
-                        <a class="btn-pacientes" href="{% url 'generar_nube' paciente.id %}">Generar Nube de Palabras</a>
+                        <h3>Listado de Manuscritos</h3>
+                        {% if manuscritos.exists %}
+                        <ul>
+                            {% for manuscrito in manuscritos %}
+                                <li>
+                                    <strong>Fecha:</strong> {{ manuscrito.fecha }}<br>
+                                    <strong>Texto:</strong> {{ manuscrito.texto }}<br>
+                                    {% if manuscrito.imagen %}
+                                        <img src="{{ manuscrito.imagen.url }}" alt="Imagen del manuscrito" style="max-width: 300px;"><br>
+                                    {% endif %}
+                                    <form method="POST" action="{% url 'borrar_manuscrito' manuscrito.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn-delete">Eliminar Manuscrito</button>
+                                    </form>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No existen manuscritos previos.</p>
+                    {% endif %}
+
+                        
+                        <!-- Botón para agregar nuevo manuscrito -->
+                        <button id="abrirPopup">Agregar Manuscrito</button>
                     </div>
+                    
+                    
+                    
+                    
+                    <!-- Popup para agregar una nueva nota -->
+                    <div id="agregarNotaPopup" class="popup" style="display: none;">
+                        <div class="popup-content">
+                            <span class="close" id="cerrarPopup">&times;</span>
+                            <form id="formImagen" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <!-- Reordenar los elementos: fecha hasta arriba -->
+                                <label for="fecha">Fecha de la Cita:</label>
+                                <input type="date" id="fecha" name="fecha" required>
+                                <br>
+                                <div class="content-container">
+                                    <div class="image-container">
+                                        <label for="imagen">Cargar Imagen de la Nota:</label>
+                                        <input type="file" id="imagen" name="imagen" accept="image/*" required>
+                                        <br>
+                                        <img id="previewImagen" style="display: none; width: 100%; height: auto;" alt="Previsualización de la imagen">
+                                    </div>
+                                    <div class="text-container">
+                                        <label for="texto">Texto Extraído (Editable):</label>
+                                        <textarea id="texto" name="texto" rows="10" cols="30" disabled></textarea>
+                                    </div>
+                                </div>
+                                <br>
+                                <!-- Indicador de carga -->
+                                <div id="loadingIndicator" style="display: none;">Procesando imagen, por favor espera...</div>
+                                <br>
+                                <button type="submit" id="guardarNotaBtn" disabled>Guardar Nota</button>
+                                <button type="button" id="cancelarPopup">Cancelar</button>
+                            </form>
+                        </div>
+                    </div>
+
+
                     
                     <script>
                         document.addEventListener("DOMContentLoaded", function () {
-    const tabLinks = document.querySelectorAll(".tab-links a");
-    const tabs = document.querySelectorAll(".tab");
-
-    tabLinks.forEach(function (link) {
-        link.addEventListener("click", function (e) {
-            e.preventDefault();
-            
-            // Quitar clase "active" de todas las pestañas y enlaces
-            tabLinks.forEach(function (item) {
-                item.parentElement.classList.remove("active");
-            });
-
-            tabs.forEach(function (tab) {
-                tab.classList.remove("active");
-            });
-
-            // Añadir clase "active" a la pestaña y enlace actual
-            const currentTab = document.querySelector(this.getAttribute("href"));
-            currentTab.classList.add("active");
-            this.parentElement.classList.add("active");
-        });
-    });
-});
+                            const tabLinks = document.querySelectorAll(".tab-links a");
+                            const tabs = document.querySelectorAll(".tab");
+                            
+                            tabLinks.forEach(function (link) {
+                                link.addEventListener("click", function (e) {
+                                    e.preventDefault();
+                                    
+                                    // Quitar clase "active" de todas las pestañas y enlaces
+                                    tabLinks.forEach(function (item) {
+                                        item.parentElement.classList.remove("active");
+                                    });
+                                    
+                                    tabs.forEach(function (tab) {
+                                        tab.classList.remove("active");
+                                    });
+                                    
+                                    // Añadir clase "active" a la pestaña y enlace actual
+                                    const currentTab = document.querySelector(this.getAttribute("href"));
+                                    currentTab.classList.add("active");
+                                    this.parentElement.classList.add("active");
+                                });
+                            });
+                        });
 
                     </script>
                 </div>
             </div>
     
-            <!-- Botón de agregar cita -->
-            <a class="btn-pacientes" href="{% url 'agregar_cita' paciente.id %}">Agregar Cita</a>
-    
-            <!-- Botón de escanear imágenes -->
-            <a class="btn-pacientes" href="{% url 'procesar_manuscrito' paciente.id %}">Escanear Imágenes</a>
+      
         </div>
     {% endfor %}
     

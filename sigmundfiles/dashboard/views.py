@@ -1,11 +1,15 @@
+import os
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.db.models import Q
 from django.contrib.auth import login, authenticate, logout
+from django.core.files.storage import default_storage
 from .forms import UserRegistrationForm, UserLoginForm, CitaForm, ManuscritoForm, PacienteForm, PadresForm, HermanoFormSet, SaludFormSet, HogarForm
 from django.contrib.auth.decorators import login_required
 from .models import Paciente, Cita, Manuscrito
-import pytesseract
+from django.views.decorators.csrf import csrf_exempt
+import cv2
+import easyocr
 from PIL import Image
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
@@ -177,19 +181,140 @@ def generar_nube_de_palabras(texto):
     plt.savefig('media/wordclouds/nube_de_palabras.png')
     plt.close()
 
+
+def gestionar_manuscritos(request, paciente_id):
+    # Obtener el paciente
+    paciente = get_object_or_404(Paciente, id=paciente_id)
+    
+    # Obtener los manuscritos asociados a ese paciente
+    manuscritos = Manuscrito.objects.filter(paciente=paciente)
+    
+    # Renderizar el template con la información de manuscritos
+    return render(request, 'gestionar_manuscritos.html', {'paciente': paciente, 'manuscritos': manuscritos})
+
+def borrar_manuscrito(request, manuscrito_id):
+    # Buscar el manuscrito y eliminarlo
+    manuscrito = get_object_or_404(Manuscrito, id=manuscrito_id)
+    paciente_id = manuscrito.paciente.id  # Guardar el id del paciente para redirigirlo después
+    manuscrito.delete()
+
+    # Redirigir a la vista de gestionar manuscritos
+    return redirect('gestionar_manuscritos', paciente_id=paciente_id)
+
 @login_required
 def agregar_nota_view(request, paciente_id):
+    paciente = get_object_or_404(Paciente, id=paciente_id)
+    
     if request.method == 'POST':
-        nueva_nota = request.POST.get('nueva_nota')
-        if nueva_nota:
-            cita = Cita.objects.create(
-                paciente_id=paciente_id,
-                texto=nueva_nota,
-                usuario=request.user
+        imagen = request.FILES.get('imagen')
+        fecha = request.POST.get('fecha')
+        texto_extraido = ""
+
+        if imagen:
+            # Guardar temporalmente la imagen para procesarla
+            temp_image_path = default_storage.save('temp_image.jpg', imagen)
+            temp_image_full_path = default_storage.path(temp_image_path)  # Obtener la ruta completa
+
+            # Cargar la imagen usando OpenCV
+            image = cv2.imread(temp_image_full_path)
+            
+            # Aplicar OCR usando EasyOCR
+            reader = easyocr.Reader(['es'], gpu=False)  # Configurado para español
+            result = reader.readtext(image, detail=0)  # Extraer solo el texto
+            texto_extraido = ' '.join(result)  # Unir el texto extraído en un solo string
+
+            # Eliminar la imagen temporal después de extraer el texto
+            default_storage.delete(temp_image_path)
+        
+        # Renderizar la página con el texto extraído en el popup
+        return render(request, 'analisis_citas_template.html', {
+            'paciente': paciente,
+            'texto_extraido': texto_extraido,
+            'fecha': fecha,
+            'mostrar_popup': True  # Indicador para desplegar el popup
+        })
+
+    # Si es un GET o no se carga ninguna imagen
+    return render(request, 'analisis_citas_template.html', {'paciente': paciente})
+
+
+@csrf_exempt
+def procesar_imagen_ocr(request):
+    print("Solicitud recibida")  # Verificar si la solicitud llega
+    if request.method == 'POST' and request.FILES.get('imagen'):
+        imagen = request.FILES['imagen']
+
+        # Guardar la imagen temporalmente
+        temp_image_path = os.path.join('temp_image.jpg')
+        with open(temp_image_path, 'wb') as temp_image_file:
+            for chunk in imagen.chunks():
+                temp_image_file.write(chunk)
+
+        # Procesar la imagen con EasyOCR
+        try:
+            # Leer la imagen con OpenCV
+            image = cv2.imread(temp_image_path)
+
+            # PREPROCESAMIENTO
+
+            # Convertir a escala de grises
+            gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+            # Aplicar un filtro gaussiano para reducir el ruido
+            denoised_image = cv2.GaussianBlur(gray_image, (5, 5), 0)
+
+            # Aplicar umbral adaptativo para mejorar el contraste
+            thresh_image = cv2.adaptiveThreshold(
+                denoised_image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                cv2.THRESH_BINARY, 11, 2
             )
-            cita.save()
-            return redirect('detalle_paciente', paciente_id=paciente_id)
-    return redirect('detalle_paciente', paciente_id=paciente_id)
+
+            # (Opcional) Redimensionar la imagen si es muy pequeña
+            height, width = thresh_image.shape
+            if height < 500 or width < 500:
+                thresh_image = cv2.resize(thresh_image, (width * 2, height * 2), interpolation=cv2.INTER_LINEAR)
+
+            # Crear el lector de OCR
+            reader = easyocr.Reader(['es'], gpu=False)
+
+            # Ejecutar el OCR en la imagen preprocesada
+            result = reader.readtext(thresh_image, detail=0)
+
+            # Unir el texto extraído
+            texto_extraido = ' '.join(result)
+
+            # Eliminar la imagen temporal
+            os.remove(temp_image_path)
+
+            # Obtener el paciente
+            paciente_id = request.POST.get('paciente_id')
+            print(f"Paciente ID: {paciente_id}")  # Verificar el ID del paciente
+            paciente = Paciente.objects.get(id=paciente_id)
+
+            # Crear un nuevo manuscrito
+            manuscrito = Manuscrito(paciente=paciente, imagen=imagen, texto=texto_extraido)
+            manuscrito.save()
+
+            # Enviar la respuesta JSON
+            return JsonResponse({'texto': texto_extraido})
+
+        except Exception as e:
+            print(f"Error al procesar la imagen: {e}")
+            return JsonResponse({'error': 'Ocurrió un error al procesar la imagen'}, status=500)
+
+    return JsonResponse({'error': 'No se envió ninguna imagen'}, status=400)
+
+
+
+def borrar_manuscrito(request, manuscrito_id):
+    manuscrito = get_object_or_404(Manuscrito, id=manuscrito_id)
+    
+    if request.method == 'POST':
+        manuscrito.delete()
+        return redirect('nombre_de_la_vista_donde_se_listan_los_manuscritos')  # Reemplaza con la vista correspondiente
+    
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
+
 
 @login_required
 def generar_nube_view(request, paciente_id):
