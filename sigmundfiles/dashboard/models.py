@@ -146,3 +146,5 @@ class Manuscrito(models.Model):
     imagen = models.ImageField(upload_to='manuscritos/')
     texto = models.TextField(blank=True, null=True)
     fecha = models.DateTimeField(auto_now_add=True)
+    nube_palabras = models.ImageField(upload_to='nubes/', null=True, blank=True)  # Nuevo campo para la nube de palabras
+    

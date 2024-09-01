@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.db.models import Q
 from django.contrib.auth import login, authenticate, logout
 from django.core.files.storage import default_storage
+from django.urls import reverse
 from .forms import UserRegistrationForm, UserLoginForm, CitaForm, ManuscritoForm, PacienteForm, PadresForm, HermanoFormSet, SaludFormSet, HogarForm
 from django.contrib.auth.decorators import login_required
 from .models import Paciente, Cita, Manuscrito
@@ -188,18 +189,24 @@ def gestionar_manuscritos(request, paciente_id):
     
     # Obtener los manuscritos asociados a ese paciente
     manuscritos = Manuscrito.objects.filter(paciente=paciente)
-    
+    print(manuscritos)  # Debugging
+
     # Renderizar el template con la información de manuscritos
     return render(request, 'gestionar_manuscritos.html', {'paciente': paciente, 'manuscritos': manuscritos})
 
-def borrar_manuscrito(request, manuscrito_id):
-    # Buscar el manuscrito y eliminarlo
-    manuscrito = get_object_or_404(Manuscrito, id=manuscrito_id)
-    paciente_id = manuscrito.paciente.id  # Guardar el id del paciente para redirigirlo después
+
+
+def borrar_manuscrito(request, manuscrito_id, paciente_id):
+    # Obtener el manuscrito específico y verificar que pertenezca al paciente correcto
+    manuscrito = get_object_or_404(Manuscrito, id=manuscrito_id, paciente_id=paciente_id)
+
+    # Eliminar el manuscrito
     manuscrito.delete()
 
-    # Redirigir a la vista de gestionar manuscritos
-    return redirect('gestionar_manuscritos', paciente_id=paciente_id)
+    # Redirigir de nuevo al dashboard (ajusta según tu vista)
+    return redirect('dashboard')  # Redirige al nombre de la vista asociada a tu dashboard
+
+
 
 @login_required
 def agregar_nota_view(request, paciente_id):
@@ -237,7 +244,6 @@ def agregar_nota_view(request, paciente_id):
     # Si es un GET o no se carga ninguna imagen
     return render(request, 'analisis_citas_template.html', {'paciente': paciente})
 
-
 @csrf_exempt
 def procesar_imagen_ocr(request):
     print("Solicitud recibida")  # Verificar si la solicitud llega
@@ -256,47 +262,34 @@ def procesar_imagen_ocr(request):
             image = cv2.imread(temp_image_path)
 
             # PREPROCESAMIENTO
-
-            # Convertir a escala de grises
             gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-            # Aplicar un filtro gaussiano para reducir el ruido
             denoised_image = cv2.GaussianBlur(gray_image, (5, 5), 0)
-
-            # Aplicar umbral adaptativo para mejorar el contraste
             thresh_image = cv2.adaptiveThreshold(
                 denoised_image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
                 cv2.THRESH_BINARY, 11, 2
             )
-
-            # (Opcional) Redimensionar la imagen si es muy pequeña
             height, width = thresh_image.shape
             if height < 500 or width < 500:
                 thresh_image = cv2.resize(thresh_image, (width * 2, height * 2), interpolation=cv2.INTER_LINEAR)
 
-            # Crear el lector de OCR
             reader = easyocr.Reader(['es'], gpu=False)
-
-            # Ejecutar el OCR en la imagen preprocesada
             result = reader.readtext(thresh_image, detail=0)
-
-            # Unir el texto extraído
             texto_extraido = ' '.join(result)
-
-            # Eliminar la imagen temporal
             os.remove(temp_image_path)
 
-            # Obtener el paciente
             paciente_id = request.POST.get('paciente_id')
-            print(f"Paciente ID: {paciente_id}")  # Verificar el ID del paciente
+            fecha_cita = request.POST.get('fecha')  # Obtener la fecha de la cita desde el formulario
             paciente = Paciente.objects.get(id=paciente_id)
 
-            # Crear un nuevo manuscrito
             manuscrito = Manuscrito(paciente=paciente, imagen=imagen, texto=texto_extraido)
             manuscrito.save()
 
-            # Enviar la respuesta JSON
-            return JsonResponse({'texto': texto_extraido})
+            # Generar la nube de palabras
+            nube_path = generar_nube_de_palabras(texto_extraido, paciente_id, fecha_cita)
+            manuscrito.nube_palabras = nube_path
+            manuscrito.save()
+
+            return JsonResponse({'texto': texto_extraido, 'nube_url': f'/{nube_path}'})
 
         except Exception as e:
             print(f"Error al procesar la imagen: {e}")
@@ -306,25 +299,38 @@ def procesar_imagen_ocr(request):
 
 
 
-def borrar_manuscrito(request, manuscrito_id):
-    manuscrito = get_object_or_404(Manuscrito, id=manuscrito_id)
-    
-    if request.method == 'POST':
-        manuscrito.delete()
-        return redirect('nombre_de_la_vista_donde_se_listan_los_manuscritos')  # Reemplaza con la vista correspondiente
-    
-    return JsonResponse({'error': 'Método no permitido'}, status=405)
+def generar_nube_de_palabras(texto, paciente_id, fecha_cita):
+    # Crear la ruta de la carpeta para las nubes de palabras del paciente
+    paciente_folder = os.path.join('media/wordclouds', f'paciente_{paciente_id}')
+    if not os.path.exists(paciente_folder):
+        os.makedirs(paciente_folder)
+
+    # Nombre de la imagen basado en la fecha de la cita
+    nombre_imagen = f'nube_{fecha_cita}.png'
+    ruta_imagen = os.path.join(paciente_folder, nombre_imagen)
+
+    # Generar la nube de palabras
+    wordcloud = WordCloud(width=800, height=400, background_color='white').generate(texto)
+
+    # Guardar la imagen
+    wordcloud.to_file(ruta_imagen)
+
+    return ruta_imagen
 
 
 @login_required
-def generar_nube_view(request, paciente_id):
+def generar_nube_popup_view(request, paciente_id):
     paciente = get_object_or_404(Paciente, id=paciente_id)
-    citas = Cita.objects.filter(paciente=paciente)
-    
-    # Combina todos los textos de las citas en un solo string
-    texto_completo = ' '.join([cita.texto for cita in citas])
-    
-    # Generar la nube de palabras
-    generar_nube_de_palabras(texto_completo)
-    
-    return redirect('detalle_paciente', paciente_id=paciente_id)
+
+    if request.method == "POST":
+        texto = request.POST.get('texto')
+        
+        if texto:
+            # Generar la nube de palabras y obtener la URL
+            nube_path = generar_nube_de_palabras(texto)
+            
+            # Asegúrate de que la URL refleje la ubicación correcta
+            nube_url = f'/{nube_path}'
+            return redirect('dashboard') 
+
+    return JsonResponse({'error': 'No se pudo generar la nube de palabras.'})   

@@ -203,30 +203,53 @@
 
                     <div id="tab6" class="tab">
                         <h3>Listado de Manuscritos</h3>
-                        {% if manuscritos.exists %}
-                        <ul>
-                            {% for manuscrito in manuscritos %}
-                                <li>
-                                    <strong>Fecha:</strong> {{ manuscrito.fecha }}<br>
-                                    <strong>Texto:</strong> {{ manuscrito.texto }}<br>
-                                    {% if manuscrito.imagen %}
-                                        <img src="{{ manuscrito.imagen.url }}" alt="Imagen del manuscrito" style="max-width: 300px;"><br>
-                                    {% endif %}
-                                    <form method="POST" action="{% url 'borrar_manuscrito' manuscrito.id %}">
+                    
+                        {% if paciente.manuscrito_set.exists %}
+                            {% for manuscrito in paciente.manuscrito_set.all %}
+                                <div class="manuscrito-item">
+                                    <p><strong>Fecha:</strong> {{ manuscrito.fecha }}</p>
+                                    <button class="verNotasBtn" data-manuscrito-id="{{ manuscrito.id }}">Ver Notas</button>
+                    
+                                    <!-- Contenedor de notas que se muestra al hacer clic en "Ver Notas" -->
+                                    <div id="notasContainer-{{ manuscrito.id }}" class="notasContainer">
+                                        <p><strong>Texto:</strong> {{ manuscrito.texto }}</p>
+                                    
+                                        {% if manuscrito.imagen %}
+                                            <p><strong>Imagen del manuscrito:</strong></p>
+                                            <img src="{{ manuscrito.imagen.url }}" alt="Imagen del manuscrito" style="width: 100%; height: auto;">
+                                        {% endif %}
+                                    
+                                        <p><strong>Nube de Palabras:</strong></p>
+                                        {% if manuscrito.nube_palabras %}
+                                            <img src="{{ manuscrito.nube_palabras.url }}" alt="Nube de Palabras" style="width: 100%; height: auto;">
+                                        {% else %}
+                                            <p>No se ha generado la nube de palabras aún.</p>
+                                        {% endif %}
+                                    </div>
+                                    
+                    
+                                    <!-- Formulario para eliminar manuscrito -->
+                                    <form method="POST" id="deleteForm-{{ manuscrito.id }}">
                                         {% csrf_token %}
-                                        <button type="submit" class="btn-delete">Eliminar Manuscrito</button>
+                                        <button type="button" class="btn-delete" onclick="submitDeleteForm({{ manuscrito.id }}, {{ paciente.id }})">Eliminar Manuscrito</button>
                                     </form>
-                                </li>
+                                    <script>
+                                        function submitDeleteForm(manuscritoId, pacienteId) {
+                                            var form = document.getElementById('deleteForm-' + manuscritoId);
+                                            form.action = '/dashboard/borrar-manuscrito/' + pacienteId + '/' + manuscritoId + '/';
+                                            form.submit();
+                                        }
+                                    </script>
+                                </div>
                             {% endfor %}
-                        </ul>
-                    {% else %}
-                        <p>No existen manuscritos previos.</p>
-                    {% endif %}
-
-                        
-                        <!-- Botón para agregar nuevo manuscrito -->
+                        {% else %}
+                            <p>No existen manuscritos previos.</p>
+                        {% endif %}
+                    
+                        <!-- Botón de agregar manuscrito siempre visible -->
                         <button id="abrirPopup">Agregar Manuscrito</button>
                     </div>
+                    
                     
                     
                     
@@ -235,9 +258,8 @@
                     <div id="agregarNotaPopup" class="popup" style="display: none;">
                         <div class="popup-content">
                             <span class="close" id="cerrarPopup">&times;</span>
-                            <form id="formImagen" enctype="multipart/form-data">
+                            <form id="formImagen" method="POST" enctype="multipart/form-data" action="{% url 'generar_nube_popup' paciente.id %}">
                                 {% csrf_token %}
-                                <!-- Reordenar los elementos: fecha hasta arriba -->
                                 <label for="fecha">Fecha de la Cita:</label>
                                 <input type="date" id="fecha" name="fecha" required>
                                 <br>
@@ -254,14 +276,82 @@
                                     </div>
                                 </div>
                                 <br>
-                                <!-- Indicador de carga -->
+                                <!-- Contenedor para la nube de palabras -->
+                                <div id="nubePalabrasContainer" style="display: block;">
+                                    <label>Nube de Palabras:</label>
+                                    <img id="nubePalabrasImagen" src="" alt="Nube de Palabras" style="width: 100%; height: auto;">
+                                </div>
+                                <br>
                                 <div id="loadingIndicator" style="display: none;">Procesando imagen, por favor espera...</div>
                                 <br>
                                 <button type="submit" id="guardarNotaBtn" disabled>Guardar Nota</button>
                                 <button type="button" id="cancelarPopup">Cancelar</button>
                             </form>
                         </div>
+                        <script>
+                            document.getElementById('texto').addEventListener('input', function() {
+                                const form = document.getElementById('formImagen');
+                                const formData = new FormData(form);
+                                
+                                fetch(form.action, {
+                                    method: 'POST',
+                                    body: formData,
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.nube_url) {
+                                        const nubePalabrasContainer = document.getElementById('nubePalabrasContainer');
+                                        const nubePalabrasImagen = document.getElementById('nubePalabrasImagen');
+                                        nubePalabrasImagen.src = data.nube_url;
+                                        nubePalabrasContainer.style.display = 'block';
+                                    } else if (data.error) {
+                                        console.error('Error:', data.error);
+                                    }
+                                })
+                                .catch(error => console.error('Error:', error));
+                            });
+
+                            document.getElementById('formImagen').addEventListener('submit', function(event) {
+                                event.preventDefault(); // Evitar el envío normal del formulario
+                                
+                                    var formData = new FormData(this);
+                                    var loadingIndicator = document.getElementById('loadingIndicator');
+                                    var guardarNotaBtn = document.getElementById('guardarNotaBtn');
+                                    var nubePalabrasContainer = document.getElementById('nubePalabrasContainer');
+                                    var nubePalabrasImagen = document.getElementById('nubePalabrasImagen');
+                                    var textoArea = document.getElementById('texto');
+                                
+                                    // Mostrar indicador de carga
+                                    loadingIndicator.style.display = 'block';
+                                    guardarNotaBtn.disabled = true;
+                                
+                                    fetch(this.action, {
+                                        method: 'POST',
+                                        body: formData
+                                    }).then(response => response.json())
+                                    .then(data => {
+                                        if (data.error) {
+                                            alert('Error: ' + data.error);
+                                        } else {
+                                            // Actualizar el texto extraído en el textarea
+                                            textoArea.value = data.texto;
+                                
+                                            // Actualizar la imagen de la nube de palabras
+                                            nubePalabrasImagen.src = data.nube_url;
+                                            nubePalabrasContainer.style.display = 'block'; // Asegurarse de que se muestre
+                                        }
+                                    }).catch(error => {
+                                        console.error('Error al procesar la imagen:', error);
+                                    }).finally(() => {
+                                        // Ocultar indicador de carga
+                                        loadingIndicator.style.display = 'none';
+                                        guardarNotaBtn.disabled = false;
+                                    });
+                                });
+
+                        </script>
                     </div>
+
 
 
                     

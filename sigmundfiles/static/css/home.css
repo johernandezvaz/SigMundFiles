@@ -299,7 +299,7 @@ pre.w-code-block code {
   all: inherit;
 }
 
-.w-webflow-badge, .w-webflow-badge * {
+/* .w-webflow-badge, .w-webflow-badge * {
   z-index: auto;
   visibility: visible;
   box-sizing: border-box;
@@ -384,7 +384,7 @@ pre.w-code-block code {
   opacity: 1 !important;
   vertical-align: middle !important;
   display: inline-block !important;
-}
+} */
 
 h1, h2, h3, h4, h5, h6 {
   margin-bottom: 10px;
