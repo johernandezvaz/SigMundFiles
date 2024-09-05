@@ -82,6 +82,19 @@ class PacienteForm(forms.ModelForm):
             'fecha_nacimiento': forms.DateInput(attrs={'type': 'date'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super(PacienteForm, self).__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        paciente = super().save(commit=False)
+        if self.user:
+            paciente.usuario = self.user  # Asegura que el usuario se asigne
+        if commit:
+            paciente.save()
+        return paciente
+
+
 
 class PadresForm(forms.ModelForm):
     class Meta:

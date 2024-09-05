@@ -2,6 +2,8 @@ import os
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.db.models import Q
+import torch
+from torchvision import transforms
 from django.contrib.auth import login, authenticate, logout
 from django.core.files.storage import default_storage
 from django.urls import reverse
@@ -14,6 +16,12 @@ import easyocr
 from PIL import Image
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
+import numpy as np
+from google.cloud import vision
+from django.core.files.storage import default_storage
+import torch.nn as nn
+import pytesseract  
+
 
 def auth_view(request):
     print("Vista auth_view ejecutada")
@@ -69,14 +77,12 @@ def dashboard_view(request):
     # Obtener el término de búsqueda desde el input del usuario
     search_query = request.GET.get('search', '')
 
+    # Filtrar pacientes por el usuario actual
+    pacientes = Paciente.objects.filter(usuario=request.user)
+
     if search_query:
-        # Filtrar pacientes que coincidan con el nombre o apellidos
-        pacientes = Paciente.objects.filter(
-            Q(nombre_completo__icontains=search_query) 
-        )
-    else:
-        # Si no hay término de búsqueda, obtener todos los pacientes
-        pacientes = Paciente.objects.all()
+        # Si hay un término de búsqueda, filtrar los pacientes que coincidan con el nombre completo
+        pacientes = pacientes.filter(Q(nombre_completo__icontains=search_query))
 
     # Verificar si la solicitud es AJAX (para respuestas en tiempo real)
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -84,7 +90,7 @@ def dashboard_view(request):
         pacientes_data = [
             {
                 'id': paciente.id,
-                'nombre_completo': f"{paciente.nombre} {paciente.apellidos}",
+                'nombre_completo': f"{paciente.nombre_completo}",
                 'edad': paciente.edad,
                 'foto': paciente.foto.url if paciente.foto else None,
             }
@@ -98,7 +104,6 @@ def dashboard_view(request):
         'pacientes': pacientes,
     }
     return render(request, 'dashboard/dashboard.html', context)
-
 
 
 
@@ -208,6 +213,10 @@ def borrar_manuscrito(request, manuscrito_id, paciente_id):
 
 
 
+# Ruta de Tesseract
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+os.environ['TESSDATA_PREFIX'] = r'C:\Program Files\Tesseract-OCR\tessdata'
+
 @login_required
 def agregar_nota_view(request, paciente_id):
     paciente = get_object_or_404(Paciente, id=paciente_id)
@@ -220,15 +229,18 @@ def agregar_nota_view(request, paciente_id):
         if imagen:
             # Guardar temporalmente la imagen para procesarla
             temp_image_path = default_storage.save('temp_image.jpg', imagen)
-            temp_image_full_path = default_storage.path(temp_image_path)  # Obtener la ruta completa
+            temp_image_full_path = default_storage.path(temp_image_path)
 
-            # Cargar la imagen usando OpenCV
-            image = cv2.imread(temp_image_full_path)
-            
-            # Aplicar OCR usando EasyOCR
-            reader = easyocr.Reader(['es'], gpu=False)  # Configurado para español
-            result = reader.readtext(image, detail=0)  # Extraer solo el texto
-            texto_extraido = ' '.join(result)  # Unir el texto extraído en un solo string
+            # Preprocesamiento de la imagen
+            pil_image = Image.open(temp_image_full_path)
+            open_cv_image = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
+            gray_image = cv2.cvtColor(open_cv_image, cv2.COLOR_BGR2GRAY)
+            gray_image = cv2.resize(gray_image, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
+            thresh_image = cv2.adaptiveThreshold(gray_image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                                 cv2.THRESH_BINARY, 31, 2)
+
+            # Usar Tesseract para leer el texto
+            texto_extraido = pytesseract.image_to_string(thresh_image, lang='spa')
 
             # Eliminar la imagen temporal después de extraer el texto
             default_storage.delete(temp_image_path)
@@ -241,50 +253,43 @@ def agregar_nota_view(request, paciente_id):
             'mostrar_popup': True  # Indicador para desplegar el popup
         })
 
-    # Si es un GET o no se carga ninguna imagen
     return render(request, 'analisis_citas_template.html', {'paciente': paciente})
+
+
 
 @csrf_exempt
 def procesar_imagen_ocr(request):
-    print("Solicitud recibida")  # Verificar si la solicitud llega
     if request.method == 'POST' and request.FILES.get('imagen'):
         imagen = request.FILES['imagen']
 
         # Guardar la imagen temporalmente
-        temp_image_path = os.path.join('temp_image.jpg')
-        with open(temp_image_path, 'wb') as temp_image_file:
-            for chunk in imagen.chunks():
-                temp_image_file.write(chunk)
+        temp_image_path = default_storage.save('temp_image.jpg', imagen)
+        temp_image_full_path = default_storage.path(temp_image_path)
 
-        # Procesar la imagen con EasyOCR
         try:
-            # Leer la imagen con OpenCV
-            image = cv2.imread(temp_image_path)
-
-            # PREPROCESAMIENTO
+            # Preprocesar la imagen
+            image = cv2.imread(temp_image_full_path)
             gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             denoised_image = cv2.GaussianBlur(gray_image, (5, 5), 0)
             thresh_image = cv2.adaptiveThreshold(
                 denoised_image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
                 cv2.THRESH_BINARY, 11, 2
             )
-            height, width = thresh_image.shape
-            if height < 500 or width < 500:
-                thresh_image = cv2.resize(thresh_image, (width * 2, height * 2), interpolation=cv2.INTER_LINEAR)
 
-            reader = easyocr.Reader(['es'], gpu=False)
-            result = reader.readtext(thresh_image, detail=0)
-            texto_extraido = ' '.join(result)
-            os.remove(temp_image_path)
+            # Extraer texto con Tesseract
+            texto_extraido = pytesseract.image_to_string(thresh_image, lang='spa')
 
+            # Eliminar la imagen temporal después de extraer el texto
+            default_storage.delete(temp_image_path)
+
+            # Guardar el texto extraído en el modelo Manuscrito
             paciente_id = request.POST.get('paciente_id')
-            fecha_cita = request.POST.get('fecha')  # Obtener la fecha de la cita desde el formulario
+            fecha_cita = request.POST.get('fecha')
             paciente = Paciente.objects.get(id=paciente_id)
-
             manuscrito = Manuscrito(paciente=paciente, imagen=imagen, texto=texto_extraido)
             manuscrito.save()
 
-            # Generar la nube de palabras
+            # Generar la nube de palabras (suponiendo que ya tienes la función implementada)
             nube_path = generar_nube_de_palabras(texto_extraido, paciente_id, fecha_cita)
             manuscrito.nube_palabras = nube_path
             manuscrito.save()
@@ -298,24 +303,49 @@ def procesar_imagen_ocr(request):
     return JsonResponse({'error': 'No se envió ninguna imagen'}, status=400)
 
 
+def generar_nube_de_palabras(texto, paciente_id, fecha_cita):
+    # Crear la ruta de la carpeta para las nubes de palabras del paciente
+    paciente_folder = os.path.join('media/wordclouds', f'paciente_{paciente_id}')
+    if not os.path.exists(paciente_folder):
+        os.makedirs(paciente_folder)
+    
+    # Nombre de la imagen basado en la fecha de la cita
+    nombre_imagen = f'nube_{fecha_cita}.png'
+    ruta_imagen = os.path.join(paciente_folder, nombre_imagen)
+    
+    # Generar la nube de palabras
+    wordcloud = WordCloud(width=800, height=400, background_color='white').generate(texto)
+    
+    # Guardar la imagen
+    wordcloud.to_file(ruta_imagen)
+    
+    print(f"Nube de palabras generada en: {ruta_imagen}")
+    
+    return ruta_imagen
+
+
+
 
 def generar_nube_de_palabras(texto, paciente_id, fecha_cita):
     # Crear la ruta de la carpeta para las nubes de palabras del paciente
     paciente_folder = os.path.join('media/wordclouds', f'paciente_{paciente_id}')
     if not os.path.exists(paciente_folder):
         os.makedirs(paciente_folder)
-
+    
     # Nombre de la imagen basado en la fecha de la cita
     nombre_imagen = f'nube_{fecha_cita}.png'
     ruta_imagen = os.path.join(paciente_folder, nombre_imagen)
-
+    
     # Generar la nube de palabras
     wordcloud = WordCloud(width=800, height=400, background_color='white').generate(texto)
-
+    
     # Guardar la imagen
     wordcloud.to_file(ruta_imagen)
-
+    
+    print(f"Nube de palabras generada en: {ruta_imagen}")
+    
     return ruta_imagen
+
 
 
 @login_required

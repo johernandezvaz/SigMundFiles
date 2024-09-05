@@ -47,6 +47,7 @@ class User(AbstractBaseUser):
 
 
 class Paciente(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     foto = models.ImageField(upload_to='fotos_pacientes/', blank=True, null=True)
     fecha_registro = models.DateTimeField(auto_now_add=True)
     nombre_completo = models.CharField(max_length=255, blank=True, null=True, default='Nombre Desconocido')
